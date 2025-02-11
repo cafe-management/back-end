@@ -14,12 +14,11 @@ public class QRCode {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Lob
-    @Column(name = "qr_img_url")
-    private byte[] qrImgUrl;
+    @Column(name = "qr_img")
+    private String qrImg;
 
-    @ManyToOne
-    @JoinColumn(name = "id_table", referencedColumnName = "id")
+    @OneToOne
+    @JoinColumn(name = "table_id", referencedColumnName = "id")
     private TableCoffee tableCoffee;
 }
 

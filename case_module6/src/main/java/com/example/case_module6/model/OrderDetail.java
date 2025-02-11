@@ -17,11 +17,11 @@ public class OrderDetail {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "id_invoice", referencedColumnName = "id")
+    @JoinColumn(name = "invoice_id", referencedColumnName = "id")
     private Invoice invoice;
 
     @ManyToOne
-    @JoinColumn(name = "id_drink", referencedColumnName = "id")
+    @JoinColumn(name = "drink_id", referencedColumnName = "id")
     private Drink drink;
 
     @Column(nullable = false)

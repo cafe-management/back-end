@@ -3,6 +3,7 @@ package com.example.case_module6.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -20,5 +21,5 @@ public class Notification {
     private String content;
 
     @Column(name = "date_note", nullable = false)
-    private Date dateNote;
+    private LocalDateTime dateNote;
 }

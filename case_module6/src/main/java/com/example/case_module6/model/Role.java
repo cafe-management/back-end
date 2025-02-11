@@ -12,8 +12,9 @@ import lombok.*;
 public class Role {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id",columnDefinition = "BIGINT")
     private Long id;
 
-    @Column(name = "name_roles", nullable = false)
+    @Column(name = "name_roles",columnDefinition = "VARCHAR(50)",nullable = false)
     private String nameRoles;
 }

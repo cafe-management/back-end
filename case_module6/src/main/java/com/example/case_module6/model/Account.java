@@ -12,12 +12,13 @@ import lombok.*;
 public class Account {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id",columnDefinition = "BIGINT")
     private Long  id;
 
-    @Column(name = "user_name", unique = true, nullable = false)
+    @Column(name = "user_name", unique = true, nullable = false,columnDefinition = "VARCHAR(50)")
     private String userName;
 
-    @Column(name = "pass_word", nullable = false)
+    @Column(name = "pass_word", nullable = false,columnDefinition = "VARCHAR(255)")
     private String password;
 
     @ManyToOne

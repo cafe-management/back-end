@@ -3,9 +3,12 @@
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-@Entity
+ @Entity
 @Getter
 @Setter
 @AllArgsConstructor
@@ -20,7 +23,7 @@ public class Feedback {
     private String codeFeedback;
 
     @Column(name = "date_feed_back", nullable = false)
-    private Date dateFeedback;
+    private LocalDateTime dateFeedback;
 
     @ManyToOne
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
@@ -29,8 +32,8 @@ public class Feedback {
     @Column(nullable = false)
     private String content;
 
-    @ManyToOne
-    @JoinColumn(name = "id_img", referencedColumnName = "id")
-    private Image image;
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "feedback_id")
+    private List<Image> images = new ArrayList<>();
 }
 

@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.DateTimeException;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -21,10 +23,10 @@ public class Invoice {
     private String codeInvoice;
 
     @Column(name = "date_create", nullable = false)
-    private Date dateCreate;
+    private LocalDateTime dateCreate;
 
-    @Column(name = "date_payment", nullable = false)
-    private Date datePayment;
+    @Column(name = "date_payment")
+    private LocalDateTime datePayment;
 
     @Column(name = "status_order", nullable = false)
     private Boolean statusOrder;
@@ -33,10 +35,10 @@ public class Invoice {
     private BigDecimal totalAmount;
 
     @ManyToOne
-    @JoinColumn(name = "id_user", referencedColumnName = "id")
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
     @ManyToOne
-    @JoinColumn(name = "id_table", referencedColumnName = "id")
+    @JoinColumn(name = "table_id", referencedColumnName = "id")
     private TableCoffee tableCoffee;
 }
