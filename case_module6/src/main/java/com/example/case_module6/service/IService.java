@@ -4,10 +4,10 @@ import org.springframework.data.domain.Page;
 
 import java.util.List;
 
-public interface IService<E> {
+public interface IService<E,T> {
     List<E> getAll();
     void save(E entity);
-    void update(int id, E entity);
-    void delete(int id);
-    E findById(int id);
+    void update(T id, E entity);
+    void delete(T id);
+    E findById(T id);
 }
