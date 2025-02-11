@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
- @Entity
+@Entity
 @Getter
 @Setter
 @AllArgsConstructor
