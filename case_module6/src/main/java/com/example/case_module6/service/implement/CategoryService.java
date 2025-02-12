@@ -1,6 +1,7 @@
 package com.example.case_module6.service.implement;
 
 import com.example.case_module6.model.Category;
+import com.example.case_module6.model.Drink;
 import com.example.case_module6.repository.CategoryRepository;
 import com.example.case_module6.service.ICategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +11,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CategoryImplement implements ICategoryService {
+public class CategoryService implements ICategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
