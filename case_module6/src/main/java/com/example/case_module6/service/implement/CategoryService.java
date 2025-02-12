@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Service
-public class CategoryImplement implements ICategoryService {
+public class CategoryService implements ICategoryService {
     @Autowired
     private CategoryRepository categoryRepository;
 
