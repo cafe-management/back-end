@@ -1,9 +1,11 @@
 package com.example.case_module6.service.implement;
 
+import com.example.case_module6.dto.BestSellingDrinkDTO;
 import com.example.case_module6.model.OrderDetail;
 import com.example.case_module6.repository.OrderDetailRepository;
 import com.example.case_module6.service.IOrderDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -36,5 +38,8 @@ public class OrderDetailService implements IOrderDetailService {
         return orderDetailRepository.findById(id).orElse(null);
     }
 
+    public List<BestSellingDrinkDTO> getTop10BestSellingDrinks() {
+        return orderDetailRepository.findTop10BestSellingDrinks(PageRequest.of(0, 5));
+    }
 
 }

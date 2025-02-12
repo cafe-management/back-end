@@ -1,5 +1,6 @@
 package com.example.case_module6.controller;
 
+import com.example.case_module6.dto.BestSellingDrinkDTO;
 import com.example.case_module6.model.OrderDetail;
 import com.example.case_module6.service.IOrderDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,13 +12,17 @@ import java.util.List;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/order_details")
+@RequestMapping("/api/order_detail")
 public class OrderDetailRestController {
     @Autowired
     private IOrderDetailService orderDetailService;
     @GetMapping
     public ResponseEntity<List<OrderDetail>> getAllOrderDetails() {
         return new ResponseEntity<>(orderDetailService.getAll(), HttpStatus.OK);
+    }
+    @GetMapping("/top")
+    public ResponseEntity<List<BestSellingDrinkDTO>> getTop10BestSellingDrinks() {
+        return new ResponseEntity<>(orderDetailService.getTop10BestSellingDrinks(), HttpStatus.OK);
     }
     @PostMapping
     public ResponseEntity<OrderDetail> createOrderDetail(@RequestBody OrderDetail orderDetail) {
