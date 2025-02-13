@@ -1,5 +1,6 @@
 package com.example.case_module6.controller;
 
+import com.example.case_module6.DTO.TableStatusDTO;
 import com.example.case_module6.model.TableCoffee;
 import com.example.case_module6.service.ITableService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +12,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/tableCoffee")
+@CrossOrigin(origins = "**")
 public class TableCoffeeRestController {
 
     @Autowired
@@ -47,6 +49,14 @@ public class TableCoffeeRestController {
         } catch (RuntimeException e) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
+    }
+
+    @PutMapping("/{id}/status")
+    public ResponseEntity<TableCoffee> updateTableCoffeeStatus(@PathVariable("id") Long id,
+                                                               @RequestBody TableStatusDTO tableStatusDTO) {
+        Integer newStatus = tableStatusDTO.getStatus();
+        TableCoffee updatedTable = tableService.updateStatus(id, newStatus);
+        return ResponseEntity.ok(updatedTable);
     }
 
     @DeleteMapping("/{id}")

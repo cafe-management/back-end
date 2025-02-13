@@ -45,9 +45,9 @@ public class TableCoffeeService implements ITableService {
     }
 
     @Override
-    public TableCoffee updateStatus (Long id,Integer newStatus) {
-        Optional<TableCoffee>optionalTable = tableCoffeeRepository.findById(id);
-        if (optionalTable.isPresent()) {
+    public TableCoffee updateStatus(Long id, Integer newStatus) {
+        Optional<TableCoffee> optionalTable = tableCoffeeRepository.findById(id);
+        if (!optionalTable.isPresent()) {
             throw new RuntimeException("TableCoffee with id " + id + " does not exist");
         }
         TableCoffee tableCoffee = optionalTable.get();
