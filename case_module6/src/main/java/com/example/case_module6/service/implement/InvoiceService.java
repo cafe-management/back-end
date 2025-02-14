@@ -13,9 +13,8 @@ import java.util.Optional;
 public class InvoiceService implements IInvoiceService {
     @Autowired
     private InvoiceRepository invoiceRepository;
-
     @Override
-    public List<Invoice>getAll(){
+    public List<Invoice> getAll() {
         return invoiceRepository.findAll();
     }
 

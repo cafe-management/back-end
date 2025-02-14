@@ -1,9 +1,11 @@
 package com.example.case_module6.controller;
 
 import com.example.case_module6.model.Drink;
+import com.example.case_module6.repository.DrinkRepository;
 import com.example.case_module6.service.IDrinkService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,7 +17,6 @@ import java.util.List;
 public class DrinkRestController {
     @Autowired
     private IDrinkService drinkService;
-
     @GetMapping
     public ResponseEntity<List<Drink>> getDrinks() {
         List<Drink> drinks = drinkService.getAll();
@@ -69,4 +70,3 @@ public class DrinkRestController {
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
-
