@@ -1,9 +1,11 @@
 package com.example.case_module6.service.implement;
 
+import com.example.case_module6.dto.BestSellingDrinkDTO;
 import com.example.case_module6.model.CartItem;
 import com.example.case_module6.repository.CartItemRepository;
 import com.example.case_module6.service.ICartItemService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -45,5 +47,10 @@ public class CartItemService implements ICartItemService {
     public CartItem findById(Long id) {
         return cartItemRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("CartItem not found with id: " + id));
+    }
+
+    @Override
+    public List<BestSellingDrinkDTO> getTopBestSellingDrinks() {
+        return cartItemRepository.findTopBestSellingDrinks(PageRequest.of(0, 5));
     }
 }
