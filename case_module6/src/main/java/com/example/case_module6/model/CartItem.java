@@ -1,8 +1,8 @@
 package com.example.case_module6.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
-
 import java.math.BigDecimal;
 
 @Entity
@@ -10,23 +10,24 @@ import java.math.BigDecimal;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "order_details")
-public class OrderDetail {
+@Table(name = "cart_items")
+public class CartItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "invoice_id", referencedColumnName = "id")
-    private Invoice invoice;
+    @JoinColumn(name = "cart_id", referencedColumnName = "id")
+    @JsonBackReference
+    private Cart cart;
 
-    @ManyToOne
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "drink_id", referencedColumnName = "id")
     private Drink drink;
 
     @Column(nullable = false)
     private Integer quantity;
 
-    @Column(name = "total_price", nullable = false)
+    @Column(name = "total_price")
     private BigDecimal totalPrice;
 }
