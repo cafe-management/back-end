@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 public class BestSellingDrinkDTO {
+        private Long id;
         private String drinkName;
         private BigDecimal price;
         private String imgDrinks;

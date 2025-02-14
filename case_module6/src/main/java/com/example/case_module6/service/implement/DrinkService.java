@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
 @Service
 public class DrinkService implements IDrinkService {
     @Autowired
@@ -23,7 +25,11 @@ public class DrinkService implements IDrinkService {
 
     @Override
     public void update(Long id, Drink entity) {
-        drinkRepository.save(entity);
+        Optional<Drink> drink = drinkRepository.findById(id);
+        if (drink.isPresent()) {
+            entity.setId(id);
+            drinkRepository.save(entity);
+        }
     }
 
     @Override
@@ -33,6 +39,12 @@ public class DrinkService implements IDrinkService {
 
     @Override
     public Drink findById(Long id) {
-        return drinkRepository.findById(id).orElse(null);
+        Optional<Drink> drink = drinkRepository.findById(id);
+        return drink.orElse(null);
+    }
+
+    @Override
+    public List<Drink>findDrinkByCategory(Long categoryId) {
+        return drinkRepository.findByCategoryId(categoryId);
     }
 }

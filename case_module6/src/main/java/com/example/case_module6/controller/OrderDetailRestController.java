@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 @CrossOrigin("*")
-@RequestMapping("/api/order_detail")
+@RequestMapping("/api/orderDetails")
 public class OrderDetailRestController {
     @Autowired
     private IOrderDetailService orderDetailService;
@@ -21,13 +21,13 @@ public class OrderDetailRestController {
         return new ResponseEntity<>(orderDetailService.getAll(), HttpStatus.OK);
     }
     @GetMapping("/top")
-    public ResponseEntity<List<BestSellingDrinkDTO>> getTop10BestSellingDrinks() {
-        return new ResponseEntity<>(orderDetailService.getTop10BestSellingDrinks(), HttpStatus.OK);
+    public ResponseEntity<List<BestSellingDrinkDTO>> getTopBestSellingDrinks() {
+        return new ResponseEntity<>(orderDetailService.getTopBestSellingDrinks(), HttpStatus.OK);
     }
     @PostMapping
     public ResponseEntity<OrderDetail> createOrderDetail(@RequestBody OrderDetail orderDetail) {
         orderDetailService.save(orderDetail);
-        return new ResponseEntity<>(orderDetail, HttpStatus.OK);
+        return new ResponseEntity<>(orderDetail, HttpStatus.CREATED);
     }
     @PutMapping
     public ResponseEntity<OrderDetail> updateOrderDetail(@PathVariable("id") long id, @RequestBody OrderDetail orderDetail) {

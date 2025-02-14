@@ -6,5 +6,5 @@ import java.util.List;
 
 public interface IOrderDetailService extends IService<OrderDetail, Long>{
 
-    List<BestSellingDrinkDTO> getTop10BestSellingDrinks();
+    List<BestSellingDrinkDTO> getTopBestSellingDrinks();
 }

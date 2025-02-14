@@ -9,8 +9,10 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface OrderDetailRepository extends JpaRepository<OrderDetail, Long> {
-    @Query("SELECT new com.example.case_module6.dto.BestSellingDrinkDTO(d.nameDrinks, d.price, d.imgDrinks, SUM(od.quantity)) " +
+    @Query("SELECT new com.example.case_module6.dto.BestSellingDrinkDTO(d.id, d.nameDrinks, d.price, d.imgDrinks, SUM(od.quantity)) " +
             "FROM OrderDetail od JOIN od.drink d " +
+            "JOIN od.invoice i " +
+            "WHERE i.statusOrder = true " +
             "GROUP BY d.id ORDER BY SUM(od.quantity) DESC")
-    List<BestSellingDrinkDTO> findTop10BestSellingDrinks(Pageable pageable);
+    List<BestSellingDrinkDTO> findTopBestSellingDrinks(Pageable pageable);
 }

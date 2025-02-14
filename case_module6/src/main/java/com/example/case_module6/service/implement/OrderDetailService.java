@@ -8,7 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
+import java.util.NoSuchElementException;
+
 @Service
 public class OrderDetailService implements IOrderDetailService {
     @Autowired
@@ -19,8 +22,19 @@ public class OrderDetailService implements IOrderDetailService {
     }
 
     @Override
-    public void save(OrderDetail entity) {
-        orderDetailRepository.save(entity);
+    public void save(OrderDetail orderDetail) {
+        if (orderDetail.getDrink() == null ) {
+            throw new NoSuchElementException("Không tìm thấy drink");
+        }
+            if(orderDetail.getDrink().getPrice() == null) {
+                throw new RuntimeException("Drink không hợp lệ hoặc chưa có giá.");
+            }
+
+        // Tính tổng giá trước khi lưu
+        BigDecimal totalPrice = orderDetail.getDrink().getPrice()
+                .multiply(BigDecimal.valueOf(orderDetail.getQuantity()));
+        orderDetail.setTotalPrice(totalPrice);
+        orderDetailRepository.save(orderDetail);
     }
 
     @Override
@@ -38,8 +52,8 @@ public class OrderDetailService implements IOrderDetailService {
         return orderDetailRepository.findById(id).orElse(null);
     }
 
-    public List<BestSellingDrinkDTO> getTop10BestSellingDrinks() {
-        return orderDetailRepository.findTop10BestSellingDrinks(PageRequest.of(0, 5));
+    public List<BestSellingDrinkDTO> getTopBestSellingDrinks() {
+        return orderDetailRepository.findTopBestSellingDrinks(PageRequest.of(0, 5));
     }
 
 }

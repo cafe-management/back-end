@@ -30,7 +30,6 @@ public class CategoryRestController {
         }
         return new ResponseEntity<>(category, HttpStatus.OK);
     }
-
     @PostMapping
     public ResponseEntity<Category> createCategory(@RequestBody Category category) {
         categoryService.save(category);
