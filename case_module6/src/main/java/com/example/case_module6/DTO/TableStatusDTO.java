@@ -1,20 +1,13 @@
 package com.example.case_module6.DTO;
 
 public class TableStatusDTO {
-    private Integer status;
+    private Integer statusTable;
 
-    public TableStatusDTO() {
+    public Integer getStatusTable() {
+        return statusTable;
     }
 
-    public TableStatusDTO(Integer status) {
-        this.status = status;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
+    public void setStatusTable(Integer statusTable) {
+        this.statusTable = statusTable;
     }
 }

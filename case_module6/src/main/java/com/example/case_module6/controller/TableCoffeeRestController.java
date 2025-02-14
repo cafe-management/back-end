@@ -9,10 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/tableCoffee")
-@CrossOrigin(origins = "**")
+@CrossOrigin(origins = "*")
 public class TableCoffeeRestController {
 
     @Autowired
@@ -52,11 +54,16 @@ public class TableCoffeeRestController {
     }
 
     @PutMapping("/{id}/status")
-    public ResponseEntity<TableCoffee> updateTableCoffeeStatus(@PathVariable("id") Long id,
-                                                               @RequestBody TableStatusDTO tableStatusDTO) {
-        Integer newStatus = tableStatusDTO.getStatus();
-        TableCoffee updatedTable = tableService.updateStatus(id, newStatus);
-        return ResponseEntity.ok(updatedTable);
+    public ResponseEntity<TableCoffee> updateStatus(@PathVariable Long id,
+                                                    @RequestBody TableStatusDTO tableStatusDTO) {
+        TableCoffee table = tableService.findById(id);
+        if (table != null) {
+            table.setStatusTable(tableStatusDTO.getStatusTable());
+            tableService.save(table);
+            return ResponseEntity.ok(table);
+        } else {
+            return ResponseEntity.notFound().build();
+        }
     }
 
     @DeleteMapping("/{id}")
