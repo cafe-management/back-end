@@ -13,9 +13,8 @@ public class TableCoffee {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
     @Column(name = "number_table", nullable = false)
-    private Integer numberTable;
+    private String numberTable;
 
     @Column(name = "status_table", nullable = false)
     private Integer statusTable;

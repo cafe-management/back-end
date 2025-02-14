@@ -7,6 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
+
 @Service
 public class InvoiceService implements IInvoiceService {
     @Autowired
@@ -17,13 +19,17 @@ public class InvoiceService implements IInvoiceService {
     }
 
     @Override
-    public void save(Invoice entity) {
-        invoiceRepository.save(entity);
+    public void save(Invoice invoice) {
+        invoiceRepository.save(invoice);
     }
 
     @Override
     public void update(Long id, Invoice entity) {
-        invoiceRepository.save(entity);
+        Optional<Invoice> invoice = invoiceRepository.findById(id);
+        if (invoice.isPresent()) {
+            invoice.get().setId(id);
+            invoiceRepository.save(entity);
+        }
     }
 
     @Override
@@ -33,6 +39,7 @@ public class InvoiceService implements IInvoiceService {
 
     @Override
     public Invoice findById(Long id) {
-        return invoiceRepository.findById(id).orElse(null);
+        Optional<Invoice> invoice = invoiceRepository.findById(id);
+        return invoice.orElse(null);
     }
 }

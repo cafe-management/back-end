@@ -38,7 +38,7 @@ public class Invoice {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @ManyToOne
-    @JoinColumn(name = "table_id", referencedColumnName = "id")
-    private TableCoffee tableCoffee;
+    @OneToOne
+    @JoinColumn(name = "cart_id", referencedColumnName = "id", unique = true)
+    private Cart cart;
 }

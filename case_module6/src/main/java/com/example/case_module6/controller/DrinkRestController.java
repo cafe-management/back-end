@@ -12,8 +12,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@CrossOrigin("*")
 @RequestMapping("/api/drinks")
+@CrossOrigin(origins = "*")
 public class DrinkRestController {
     @Autowired
     private IDrinkService drinkService;
@@ -34,6 +34,13 @@ public class DrinkRestController {
         }
         return new ResponseEntity<>(drink, HttpStatus.OK);
     }
+
+    @PostMapping
+    public ResponseEntity<Drink> createDrink(@RequestBody Drink drink) {
+        drinkService.save(drink);
+        return new ResponseEntity<>(drink, HttpStatus.CREATED);
+    }
+
     @GetMapping("/category/{categoryId}")
     public ResponseEntity<List<Drink>> getDrinksByCategory(@PathVariable("categoryId") Long categoryId) {
         List<Drink> drinks = drinkService.findDrinkByCategory(categoryId);
@@ -41,5 +48,25 @@ public class DrinkRestController {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }
         return new ResponseEntity<>(drinks, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Drink> updateDrink(@PathVariable("id") Long id, @RequestBody Drink drink) {
+        Drink existingDrink = drinkService.findById(id);
+        if (existingDrink == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        drinkService.update(id, drink);
+        return new ResponseEntity<>(drink, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteDrink(@PathVariable("id") Long id) {
+        Drink existingDrink = drinkService.findById(id);
+        if (existingDrink == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+        drinkService.delete(id);
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }
