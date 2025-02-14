@@ -13,11 +13,12 @@ public class NotificationService implements INotificationService {
     @Autowired
     private NotificationRepository notificationRepository;
 
-    public List<Notification> findAll() {
+    public List<Notification> getAll() {
         return notificationRepository.findAll();
     }
 
     public Notification save(Notification notification) {
+        notificationRepository.save(notification);
         return notificationRepository.save(notification);
     }
 
