@@ -9,14 +9,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-
 @RestController
 @RequestMapping("/api/invoice")
 @CrossOrigin(origins = "*")
 public class InvoiceRestController {
     @Autowired
     private IInvoiceService invoiceService;
-
     @GetMapping
     public ResponseEntity<List<Invoice>> getAllInvoices() {
         List<Invoice> invoices = invoiceService.getAll();
