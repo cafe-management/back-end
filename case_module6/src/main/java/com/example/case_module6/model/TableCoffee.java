@@ -18,5 +18,8 @@ public class TableCoffee {
 
     @Column(name = "status_table", nullable = false)
     private Integer statusTable;
+
+    @Column(name = "token")
+    private String token;
 }
 
