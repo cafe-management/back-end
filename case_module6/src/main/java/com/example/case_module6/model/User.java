@@ -19,7 +19,7 @@ public class User {
     @Column(name = "id", columnDefinition = "BIGINT")
     private Long id;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "account_id", referencedColumnName = "id")
     private Account account;
 
