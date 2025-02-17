@@ -3,6 +3,7 @@ package com.example.case_module6.service.implement;
 import com.example.case_module6.model.Account;
 import com.example.case_module6.model.User;
 import com.example.case_module6.repository.AccountRepository;
+import com.example.case_module6.repository.RoleRepository;
 import com.example.case_module6.repository.UserRepository;
 import com.example.case_module6.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,14 +41,20 @@ public class UserService implements IUserService {
 
         entity.getAccount().setPassword(encodedPassword);
         entity.getAccount().setDateCreatePassWord(time);
+        System.out.println("🟠 Dữ liệu nhận được1: " + entity);
 
         // Lưu account trước khi lưu user
         Account savedAccount = accountRepository.save(entity.getAccount());
         entity.setAccount(savedAccount);
+        System.out.println("🟠 Dữ liệu nhận được2: " + entity);
 
         // Lưu user
-        userRepository.save(entity);
-
+        User savedUser = userRepository.save(entity);
+        if (savedUser.getAccount() != null && savedUser.getAccount().getRole() != null) {
+            System.out.println("🟢 Role từ entity: " + savedUser.getAccount().getRole().getNameRoles());
+        } else {
+            System.out.println("🔴 Role bị null!");
+        }
         System.out.println("Mật khẩu gốc: " + rawPassword);
     }
 
@@ -70,4 +77,28 @@ public class UserService implements IUserService {
     }
 
 
+    @Override
+    public boolean existsByEmail(String email) {
+        return userRepository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean existsByUsername(String username) {
+        return userRepository.existsByAccount_UserName(username);
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        return userRepository.findByEmail(email);
+    }
+
+    @Override
+    public boolean validateLogin(String email, String password) {
+       User user = userRepository.findByEmail(email);
+       if (user == null) {
+           return false;
+       }
+       BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+       return encoder.matches(password, user.getAccount().getPassword());
+    }
 }

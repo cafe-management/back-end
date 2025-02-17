@@ -22,6 +22,7 @@ public class RoleRestController {
     @GetMapping
     public ResponseEntity<List<Role>> getAll(){
         List<Role> roles = roleService.getAll();
+        System.out.println("📢 Dữ liệu roles từ DB: " + roles);
         return new ResponseEntity<>(roles, HttpStatus.OK);
     }
 }
