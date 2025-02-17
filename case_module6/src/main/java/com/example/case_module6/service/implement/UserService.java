@@ -3,7 +3,6 @@ package com.example.case_module6.service.implement;
 import com.example.case_module6.model.Account;
 import com.example.case_module6.model.User;
 import com.example.case_module6.repository.AccountRepository;
-import com.example.case_module6.repository.RoleRepository;
 import com.example.case_module6.repository.UserRepository;
 import com.example.case_module6.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,38 +30,47 @@ public class UserService implements IUserService {
     @Override
     public void save(User entity) {
         if (entity.getAccount() == null) {
-            entity.setAccount(new Account()); // Tạo account mới nếu null
+            entity.setAccount(new Account());
         }
-
-        // Tạo mật khẩu tự động
         LocalDateTime time = LocalDateTime.now();
         String rawPassword = RandomStringUtils.randomAlphanumeric(8);
         String encodedPassword = passwordEncoder.encode(rawPassword);
 
         entity.getAccount().setPassword(encodedPassword);
         entity.getAccount().setDateCreatePassWord(time);
-        System.out.println("🟠 Dữ liệu nhận được1: " + entity);
 
-        // Lưu account trước khi lưu user
         Account savedAccount = accountRepository.save(entity.getAccount());
         entity.setAccount(savedAccount);
-        System.out.println("🟠 Dữ liệu nhận được2: " + entity);
+        System.out.println("Dữ liệu nhận được2: " + entity);
 
-        // Lưu user
         User savedUser = userRepository.save(entity);
         if (savedUser.getAccount() != null && savedUser.getAccount().getRole() != null) {
-            System.out.println("🟢 Role từ entity: " + savedUser.getAccount().getRole().getNameRoles());
+            System.out.println("Role từ entity: " + savedUser.getAccount().getRole().getNameRoles());
         } else {
-            System.out.println("🔴 Role bị null!");
+            System.out.println("Role bị null!");
         }
-        System.out.println("Mật khẩu gốc: " + rawPassword);
     }
 
     @Override
     public void update(Long id, User entity) {
         LocalDateTime timeUpdate = LocalDateTime.now();
         entity.getAccount().setDateCreatePassWord(timeUpdate);
-        userRepository.save(entity);
+        User existingUser = userRepository.findById(id).orElse(null);
+        if (existingUser != null) {
+            if (entity.getAddress() != null) {
+                existingUser.setAddress(entity.getAddress());
+            }
+            if (entity.getPhoneNumber() != null) {
+                existingUser.setPhoneNumber(entity.getPhoneNumber());
+            }
+            if (entity.getAccount() != null && entity.getAccount().getPassword() != null) {
+                String newPassword = entity.getAccount().getPassword();
+                BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
+                String hashedPassword = passwordEncoder.encode(newPassword);
+                existingUser.getAccount().setPassword(hashedPassword);
+            }
+        }
+        userRepository.save(existingUser);
     }
 
     @Override
@@ -72,10 +80,8 @@ public class UserService implements IUserService {
 
     @Override
     public User findById(Long id) {
-        Optional<User> user = userRepository.findById(id);
-        return user.orElse(null);
+        return userRepository.findById(id).orElse(null);
     }
-
 
     @Override
     public boolean existsByEmail(String email) {
@@ -88,17 +94,8 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email);
+    public User getUserByUsername(String username) {
+        return userRepository.findByAccount_UserName(username);
     }
 
-    @Override
-    public boolean validateLogin(String email, String password) {
-       User user = userRepository.findByEmail(email);
-       if (user == null) {
-           return false;
-       }
-       BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-       return encoder.matches(password, user.getAccount().getPassword());
-    }
 }
