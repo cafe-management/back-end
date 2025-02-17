@@ -23,7 +23,8 @@ public class Account {
 
     @Column(name = "pass_word", nullable = false,columnDefinition = "VARCHAR(255)")
     private String password;
-    @Column(name = "date_create", nullable = false, columnDefinition = "DATETIME")
+
+    @Column(name = "date_create", columnDefinition = "DATETIME")
     private LocalDateTime dateCreatePassWord;
 
     @ManyToOne (fetch = FetchType.EAGER)

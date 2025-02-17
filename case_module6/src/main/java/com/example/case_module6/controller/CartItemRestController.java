@@ -1,12 +1,10 @@
 package com.example.case_module6.controller;
 
-import com.example.case_module6.dto.BestSellingDrinkDTO;
+import com.example.case_module6.DTO.BestSellingDrinkDTO;
 import com.example.case_module6.model.CartItem;
 
 import com.example.case_module6.service.ICartItemService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,11 +27,6 @@ public class CartItemRestController {
     public ResponseEntity<CartItem> getCartItemById(@PathVariable Long id) {
         return ResponseEntity.ok(cartItemService.findById(id));
     }
-    @GetMapping("/top")
-    public ResponseEntity<List<BestSellingDrinkDTO>> getTopCartItems() {
-        return new ResponseEntity<>(cartItemService.getTopBestSellingDrinks(), HttpStatus.OK);
-
-    }
     @PostMapping
     public ResponseEntity<Void> createCartItem(@RequestBody CartItem cartItem) {
         cartItemService.save(cartItem);
@@ -52,4 +45,9 @@ public class CartItemRestController {
         return ResponseEntity.ok().build();
     }
 
+    @GetMapping("/top-products")
+    public ResponseEntity<List<BestSellingDrinkDTO>> getTopProducts(@RequestParam(defaultValue = "5") int limit) {
+        List<BestSellingDrinkDTO> topProducts = cartItemService.findTopProducts(limit);
+        return ResponseEntity.ok(topProducts);
+    }
 }

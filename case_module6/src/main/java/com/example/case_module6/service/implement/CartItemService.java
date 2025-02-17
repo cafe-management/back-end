@@ -1,13 +1,15 @@
 package com.example.case_module6.service.implement;
 
-import com.example.case_module6.dto.BestSellingDrinkDTO;
+import com.example.case_module6.DTO.BestSellingDrinkDTO;
 import com.example.case_module6.model.CartItem;
+import com.example.case_module6.model.Drink;
 import com.example.case_module6.repository.CartItemRepository;
 import com.example.case_module6.service.ICartItemService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -48,9 +50,15 @@ public class CartItemService implements ICartItemService {
         return cartItemRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("CartItem not found with id: " + id));
     }
-
     @Override
-    public List<BestSellingDrinkDTO> getTopBestSellingDrinks() {
-        return cartItemRepository.findTopBestSellingDrinks(PageRequest.of(0, 5));
+    public List<BestSellingDrinkDTO> findTopProducts(int limit) {
+        List<Object[]> results = cartItemRepository.findTopProducts(PageRequest.of(0, limit));
+        List<BestSellingDrinkDTO> topProducts = new ArrayList<>();
+        for (Object[] result : results) {
+            Drink drink = (Drink) result[0];
+            Long totalQuantity = (Long) result[1];
+            topProducts.add(new BestSellingDrinkDTO(drink, totalQuantity));
+        }
+        return topProducts;
     }
 }
