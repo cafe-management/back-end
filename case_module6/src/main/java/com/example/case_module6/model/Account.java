@@ -1,7 +1,10 @@
 package com.example.case_module6.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import lombok.*;
+
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -20,8 +23,11 @@ public class Account {
 
     @Column(name = "pass_word", nullable = false,columnDefinition = "VARCHAR(255)")
     private String password;
+    @Column(name = "date_create", nullable = false, columnDefinition = "DATETIME")
+    private LocalDateTime dateCreatePassWord;
 
-    @ManyToOne
+    @ManyToOne (fetch = FetchType.EAGER)
     @JoinColumn(name = "role_id", referencedColumnName = "id")
+    @JsonIgnoreProperties("accounts")
     private Role role;
 }
