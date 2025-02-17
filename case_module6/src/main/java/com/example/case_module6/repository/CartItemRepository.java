@@ -9,5 +9,9 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.List;
 
 public interface CartItemRepository extends JpaRepository<CartItem, Long> {
-
+    @Query("SELECT c.drink, SUM(c.quantity) AS totalQuantity " +
+            "FROM CartItem c " +
+            "GROUP BY c.drink " +
+            "ORDER BY totalQuantity DESC")
+    List<Object[]> findTopProducts(Pageable pageable);
 }
