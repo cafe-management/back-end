@@ -47,4 +47,10 @@ public class CartRestController {
         cartService.delete(id);
         return ResponseEntity.ok().build();
     }
+
+    @GetMapping("/by-table/{tableId}")
+    public ResponseEntity<Cart> getCartByTableId(@PathVariable Long tableId) {
+        Cart cart = cartService.findCartByTableId(tableId);
+        return ResponseEntity.ok(cart);
+    }
 }

@@ -3,9 +3,13 @@ package com.example.case_module6.controller;
 import com.example.case_module6.model.Feedback;
 import com.example.case_module6.service.IFeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @RestController
@@ -34,5 +38,14 @@ public class FeedBackRestController {
             return ResponseEntity.notFound().build();
         }
         return ResponseEntity.ok(feedback);
+    }
+
+    @GetMapping("/search")
+    public ResponseEntity<List<Feedback>> getFeedbacksByDate(
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+        LocalDateTime startOfDay = date.atStartOfDay();
+        LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
+        List<Feedback> feedbacks = feedbackService.getFeedbacksByDate(startOfDay, endOfDay);
+        return ResponseEntity.ok(feedbacks);
     }
 }

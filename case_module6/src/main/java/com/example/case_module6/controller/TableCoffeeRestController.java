@@ -56,14 +56,8 @@ public class TableCoffeeRestController {
     @PutMapping("/{id}/status")
     public ResponseEntity<TableCoffee> updateStatus(@PathVariable Long id,
                                                     @RequestBody TableStatusDTO tableStatusDTO) {
-        TableCoffee table = tableService.findById(id);
-        if (table != null) {
-            table.setStatusTable(tableStatusDTO.getStatusTable());
-            tableService.save(table);
-            return ResponseEntity.ok(table);
-        } else {
-            return ResponseEntity.notFound().build();
-        }
+        TableCoffee updatedTable = tableService.updateStatus(id, tableStatusDTO.getStatusTable(), tableStatusDTO.getToken());
+        return ResponseEntity.ok(updatedTable);
     }
 
     @DeleteMapping("/{id}")

@@ -45,13 +45,22 @@ public class TableCoffeeService implements ITableService {
     }
 
     @Override
-    public TableCoffee updateStatus(Long id, Integer newStatus) {
+    public TableCoffee updateStatus(Long id, Integer newStatus, String token) {
         Optional<TableCoffee> optionalTable = tableCoffeeRepository.findById(id);
         if (!optionalTable.isPresent()) {
             throw new RuntimeException("TableCoffee with id " + id + " does not exist");
         }
         TableCoffee tableCoffee = optionalTable.get();
         tableCoffee.setStatusTable(newStatus);
+
+        // Nếu newStatus là 1 (bàn được sử dụng), cập nhật token, ngược lại xóa token (hoặc để lại null)
+        if(newStatus == 1) {
+            tableCoffee.setToken(token);
+        } else {
+            tableCoffee.setToken(null);
+        }
+
         return tableCoffeeRepository.save(tableCoffee);
     }
+
 }

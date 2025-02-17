@@ -66,4 +66,9 @@ public class CartService implements ICartService {
         messagingTemplate.convertAndSend("/topic/notifications", notification);
         return savedCart;
     }
+
+    public Cart findCartByTableId(Long tableId) {
+        return cartRepository.findByTable_Id(tableId)
+                .orElseThrow(() -> new RuntimeException("Cart not found with table id: " + tableId));
+    }
 }
