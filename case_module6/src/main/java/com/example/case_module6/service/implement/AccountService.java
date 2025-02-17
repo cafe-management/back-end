@@ -16,7 +16,9 @@ public class AccountService implements IAccountService {
     @Override
     public boolean validateLogin(String username, String password) {
         Account account = accountRepository.findByUserName(username);
+        System.out.println("Đăng nhập với username: " + username);
         if (account == null) {
+            System.out.println("Không tìm thấy tài khoản với username: " + username);
             return false;
         }
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();

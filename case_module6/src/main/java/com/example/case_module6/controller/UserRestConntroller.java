@@ -49,14 +49,25 @@ public class UserRestConntroller {
         userService.save(user);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
-    @GetMapping("/{id}")
-    public ResponseEntity<?> getUserById(@PathVariable Long id) {
-        User user = userService.findById(id);
+    @GetMapping("/information")
+    public ResponseEntity<User> getUserInformation(@RequestParam("username") String username) {
+        User user = userService.getUserByUsername(username);
         if (user == null) {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }else {
             return new ResponseEntity<>(user, HttpStatus.OK);
         }
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
+        System.out.println("kkkkkkkkkkk");
+         if(user.getId() == null) {
+             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+         }else {
+             userService.update(id, user);
+             return new ResponseEntity<>(user, HttpStatus.OK);
+         }
+
     }
 
 

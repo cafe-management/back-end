@@ -1,6 +1,5 @@
 package com.example.case_module6.service.implement;
 
-import com.example.case_module6.dto.BestSellingDrinkDTO;
 import com.example.case_module6.model.CartItem;
 import com.example.case_module6.model.Drink;
 import com.example.case_module6.repository.CartItemRepository;
@@ -51,13 +50,13 @@ public class CartItemService implements ICartItemService {
                 .orElseThrow(() -> new RuntimeException("CartItem not found with id: " + id));
     }
     @Override
-    public List<BestSellingDrinkDTO> findTopProducts(int limit) {
+    public List<com.example.case_module6.DTO.BestSellingDrinkDTO> findTopProducts(int limit) {
         List<Object[]> results = cartItemRepository.findTopProducts(PageRequest.of(0, limit));
-        List<BestSellingDrinkDTO> topProducts = new ArrayList<>();
+        List<com.example.case_module6.DTO.BestSellingDrinkDTO> topProducts = new ArrayList<>();
         for (Object[] result : results) {
             Drink drink = (Drink) result[0];
             Long totalQuantity = (Long) result[1];
-            topProducts.add(new BestSellingDrinkDTO(drink, totalQuantity));
+            topProducts.add(new com.example.case_module6.DTO.BestSellingDrinkDTO(drink, totalQuantity));
         }
         return topProducts;
     }
