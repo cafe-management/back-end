@@ -3,7 +3,6 @@ package com.example.case_module6.service.implement;
 import com.example.case_module6.model.Account;
 import com.example.case_module6.model.User;
 import com.example.case_module6.repository.AccountRepository;
-import com.example.case_module6.repository.RoleRepository;
 import com.example.case_module6.repository.UserRepository;
 import com.example.case_module6.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,10 +71,8 @@ public class UserService implements IUserService {
 
     @Override
     public User findById(Long id) {
-        Optional<User> user = userRepository.findById(id);
-        return user.orElse(null);
+        return userRepository.findById(id).orElse(null);
     }
-
 
     @Override
     public boolean existsByEmail(String email) {
@@ -87,18 +84,4 @@ public class UserService implements IUserService {
         return userRepository.existsByAccount_UserName(username);
     }
 
-    @Override
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email);
-    }
-
-    @Override
-    public boolean validateLogin(String email, String password) {
-       User user = userRepository.findByEmail(email);
-       if (user == null) {
-           return false;
-       }
-       BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-       return encoder.matches(password, user.getAccount().getPassword());
-    }
 }

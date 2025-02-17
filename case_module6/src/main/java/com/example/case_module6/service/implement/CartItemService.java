@@ -49,8 +49,5 @@ public class CartItemService implements ICartItemService {
                 .orElseThrow(() -> new RuntimeException("CartItem not found with id: " + id));
     }
 
-    @Override
-    public List<BestSellingDrinkDTO> getTopBestSellingDrinks() {
-        return cartItemRepository.findTopBestSellingDrinks(PageRequest.of(0, 5));
-    }
+
 }

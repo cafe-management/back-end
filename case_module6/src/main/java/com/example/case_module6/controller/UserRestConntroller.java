@@ -11,19 +11,16 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import io.jsonwebtoken.Jwts;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @CrossOrigin("*")
 @RestController
-@RequestMapping("/api/admins")
+@RequestMapping("/api")
 public class UserRestConntroller {
     @Autowired
     private IUserService userService;
 
-    @GetMapping
+    @GetMapping("/admins")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAll();
         if (users.isEmpty()) {
@@ -32,7 +29,7 @@ public class UserRestConntroller {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @GetMapping("/check_account")
+    @GetMapping("/admins/check_account")
     public ResponseEntity<Map<String, Boolean>> checkAccount(@RequestParam(required = false) String email,
                                                              @RequestParam(required = false) String username) {
         boolean existsEmail = email != null && userService.existsByEmail(email);
@@ -43,7 +40,7 @@ public class UserRestConntroller {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping
+    @PostMapping("/admins")
     public ResponseEntity<User> addUser(@RequestBody User user) {
         System.out.println("Dữ liệu nhận được Account: " + user);
         if (user.getAccount() == null) {
@@ -52,28 +49,15 @@ public class UserRestConntroller {
         userService.save(user);
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
-
-    @PostMapping("/login")
-    public ResponseEntity<Map<String, Object>> login(@RequestBody Map<String, String> request) {
-        Map<String, Object> response = new HashMap<>();
-        try {
-            String email = request.get("email");
-            String password = request.get("password");
-            boolean isValid = userService.validateLogin(email, password);
-            if (isValid) {
-                response.put("success", true);
-                response.put("message", "Đăng nhập thành công");
-                return new ResponseEntity<>(response, HttpStatus.OK);
-            } else {
-                response.put("success", false);
-                response.put("message", "Sai email hoặc mật khẩu");
-                return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
-            }
-        } catch (Exception e) {
-            response.put("success", false);
-            response.put("message", "Lỗi khi xử lý yêu cầu");
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getUserById(@PathVariable Long id) {
+        User user = userService.findById(id);
+        if (user == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }else {
+            return new ResponseEntity<>(user, HttpStatus.OK);
         }
     }
+
 
 }

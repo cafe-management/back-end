@@ -29,11 +29,6 @@ public class CartItemRestController {
     public ResponseEntity<CartItem> getCartItemById(@PathVariable Long id) {
         return ResponseEntity.ok(cartItemService.findById(id));
     }
-    @GetMapping("/top")
-    public ResponseEntity<List<BestSellingDrinkDTO>> getTopCartItems() {
-        return new ResponseEntity<>(cartItemService.getTopBestSellingDrinks(), HttpStatus.OK);
-
-    }
     @PostMapping
     public ResponseEntity<Void> createCartItem(@RequestBody CartItem cartItem) {
         cartItemService.save(cartItem);
