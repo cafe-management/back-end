@@ -49,8 +49,8 @@ public class CartRestController {
     }
 
     @GetMapping("/by-table/{tableId}")
-    public ResponseEntity<Cart> getCartByTableId(@PathVariable Long tableId) {
-        Cart cart = cartService.findCartByTableId(tableId);
-        return ResponseEntity.ok(cart);
+    public ResponseEntity<List<Cart>> getCartByTableId(@PathVariable Long tableId) {
+        List<Cart> carts = cartService.findCartsByTableId(tableId);
+        return ResponseEntity.ok(carts);
     }
 }

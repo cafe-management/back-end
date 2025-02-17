@@ -67,8 +67,12 @@ public class CartService implements ICartService {
         return savedCart;
     }
 
-    public Cart findCartByTableId(Long tableId) {
-        return cartRepository.findByTable_Id(tableId)
-                .orElseThrow(() -> new RuntimeException("Cart not found with table id: " + tableId));
+    public List<Cart> findCartsByTableId(Long tableId) {
+        List<Cart> carts = cartRepository.findByTable_Id(tableId);
+        if (carts.isEmpty()){
+            throw new RuntimeException("Cart not found with table id: " + tableId);
+        }
+        return carts;
     }
+
 }
