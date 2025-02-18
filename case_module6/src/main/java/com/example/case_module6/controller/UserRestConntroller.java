@@ -6,6 +6,8 @@ import com.example.case_module6.service.IUserService;
 import com.example.case_module6.service.implement.EmailService;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
@@ -22,13 +24,18 @@ public class UserRestConntroller {
     private IUserService userService;
     @Autowired
     private EmailService emailService;
+//    @GetMapping("/admins")
+//    public ResponseEntity<List<User>> getAllUsers() {
+//        List<User> users = userService.getAll();
+//        if (users.isEmpty()) {
+//            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+//        }
+//        return new ResponseEntity<>(users, HttpStatus.OK);
+//    }
     @GetMapping("/admins")
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAll();
-        if (users.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<>(users, HttpStatus.OK);
+    public ResponseEntity<Page<User>> getAllUsers(@RequestParam (defaultValue = "0") Integer page,
+                                                  @RequestParam (defaultValue = "5") Integer size) {
+        return new ResponseEntity<>(userService.getAllUsers(page, size), HttpStatus.OK);
     }
 
     @GetMapping("/admins/check_account")

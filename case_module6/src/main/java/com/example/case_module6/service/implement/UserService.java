@@ -6,6 +6,9 @@ import com.example.case_module6.repository.AccountRepository;
 import com.example.case_module6.repository.UserRepository;
 import com.example.case_module6.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
@@ -98,6 +101,12 @@ public class UserService implements IUserService {
     @Override
     public User getUserByUsername(String username) {
         return userRepository.findByAccount_UserName(username);
+    }
+
+    @Override
+    public Page<User> getAllUsers(Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        return userRepository.findAll(pageable);
     }
 
 }
