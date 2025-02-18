@@ -1,5 +1,6 @@
 package com.example.case_module6.service.implement;
 
+import com.example.case_module6.model.News;
 import com.example.case_module6.model.TableCoffee;
 import com.example.case_module6.repository.TableCoffeeRepository;
 import com.example.case_module6.service.ITableService;

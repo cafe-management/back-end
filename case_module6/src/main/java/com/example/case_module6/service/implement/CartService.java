@@ -1,6 +1,7 @@
 package com.example.case_module6.service.implement;
 
 import com.example.case_module6.model.Cart;
+import com.example.case_module6.model.News;
 import com.example.case_module6.model.Notification;
 import com.example.case_module6.repository.CartRepository;
 import com.example.case_module6.service.ICartService;

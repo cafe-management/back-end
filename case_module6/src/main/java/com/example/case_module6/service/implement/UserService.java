@@ -1,6 +1,7 @@
 package com.example.case_module6.service.implement;
 
 import com.example.case_module6.model.Account;
+import com.example.case_module6.model.News;
 import com.example.case_module6.model.User;
 import com.example.case_module6.repository.AccountRepository;
 import com.example.case_module6.repository.UserRepository;
@@ -15,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class UserService implements IUserService {
