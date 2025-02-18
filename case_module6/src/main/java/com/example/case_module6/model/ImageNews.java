@@ -1,6 +1,5 @@
 package com.example.case_module6.model;
 
-
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,8 +17,11 @@ public class ImageNews {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String img;
+
     @ManyToOne
-    @JoinColumn(name = "news_id")  // Cột này sẽ chứa khóa ngoại trỏ tới news.id
+    @JoinColumn(name = "news_id")
+    @JsonBackReference
     private News news;
 }
