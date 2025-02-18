@@ -10,6 +10,6 @@ public interface IUserService extends IService<User, Long>{
     boolean existsByEmail(String email);
     boolean existsByUsername(String username);
     User getUserByUsername(String username);
-    Page<User> getAllUsers(Integer page, Integer size);
+    Page<User> findAllUser(Pageable pageable);
 
 }

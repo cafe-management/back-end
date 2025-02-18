@@ -104,8 +104,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Page<User> getAllUsers(Integer page, Integer size) {
-        Pageable pageable = PageRequest.of(page, size);
+    public Page<User> findAllUser(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
 
