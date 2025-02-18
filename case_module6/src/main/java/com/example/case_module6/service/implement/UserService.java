@@ -7,6 +7,9 @@ import com.example.case_module6.repository.AccountRepository;
 import com.example.case_module6.repository.UserRepository;
 import com.example.case_module6.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
@@ -22,6 +25,8 @@ public class UserService implements IUserService {
     private AccountRepository accountRepository;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+    @Autowired
+    private EmailService emailService;
     @Override
     public List getAll() {
         return userRepository.findAll();
@@ -41,9 +46,9 @@ public class UserService implements IUserService {
 
         Account savedAccount = accountRepository.save(entity.getAccount());
         entity.setAccount(savedAccount);
-        System.out.println("Dữ liệu nhận được2: " + entity);
-
+        System.out.println("Dữ liệu nhận được 2: " + entity);
         User savedUser = userRepository.save(entity);
+        emailService.sendPasswordEmail(entity.getFullName(), entity.getEmail(), rawPassword, entity.getAccount().getUserName(), entity.getId());
         if (savedUser.getAccount() != null && savedUser.getAccount().getRole() != null) {
             System.out.println("Role từ entity: " + savedUser.getAccount().getRole().getNameRoles());
         } else {
@@ -96,6 +101,11 @@ public class UserService implements IUserService {
     @Override
     public User getUserByUsername(String username) {
         return userRepository.findByAccount_UserName(username);
+    }
+
+    @Override
+    public Page<User> findAllUser(Pageable pageable) {
+        return userRepository.findAll(pageable);
     }
 
 }
