@@ -1,5 +1,6 @@
 package com.example.case_module6.model;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -23,4 +24,9 @@ public class Cart {
     @ManyToOne
     @JoinColumn(name = "table_id", referencedColumnName = "id")
     private TableCoffee table;
+
+    @ManyToOne
+    @JoinColumn(name = "invoice_id")
+    @JsonBackReference
+    private Invoice invoice;
 }

@@ -1,5 +1,6 @@
 package com.example.case_module6.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -7,6 +8,7 @@ import java.math.BigDecimal;
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Getter
@@ -38,7 +40,7 @@ public class Invoice {
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private User user;
 
-    @OneToOne
-    @JoinColumn(name = "cart_id", referencedColumnName = "id", unique = true)
-    private Cart cart;
+    @OneToMany(mappedBy = "invoice", cascade = CascadeType.MERGE, orphanRemoval = true)
+    @JsonManagedReference
+    private List<Cart> carts;
 }
