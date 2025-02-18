@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -34,14 +33,15 @@ public class NewService implements INewsService {
     public News updateNews(Long id, News newsDetails) {
         News existingNews = newsRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "News not found with id " + id));
-
-
         existingNews.setTitle(newsDetails.getTitle());
         existingNews.setContent(newsDetails.getContent());
-        existingNews.setImages(newsDetails.getImages());
-
+        if (newsDetails.getImages() != null && !newsDetails.getImages().isEmpty()) {
+            existingNews.getImages().clear();
+            existingNews.getImages().addAll(newsDetails.getImages());
+        }
         return newsRepository.save(existingNews);
     }
+
 
     @Override
     public void deleteById(Long id) {

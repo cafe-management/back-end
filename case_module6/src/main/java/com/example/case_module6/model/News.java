@@ -31,7 +31,7 @@ public class News {
     @Column(name = "date_news", nullable = false)
     private LocalDateTime dateNews = LocalDateTime.now();
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "news_id")
+    @OneToMany(mappedBy = "news", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonManagedReference
     private List<ImageNews> images = new ArrayList<>();
 }
