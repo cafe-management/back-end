@@ -1,5 +1,6 @@
 package com.example.case_module6.controller;
 
+import com.example.case_module6.model.Cart;
 import com.example.case_module6.model.Invoice;
 import com.example.case_module6.service.IInvoiceService;
 import jakarta.persistence.Column;
@@ -9,49 +10,30 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
+
 @RestController
-@RequestMapping("/api/invoice")
+@RequestMapping("/api/invoices")
 @CrossOrigin(origins = "*")
 public class InvoiceRestController {
     @Autowired
     private IInvoiceService invoiceService;
-    @GetMapping
-    public ResponseEntity<List<Invoice>> getAllInvoices() {
-        List<Invoice> invoices = invoiceService.getAll();
-        return new ResponseEntity<>(invoices, HttpStatus.OK);
-    }
-    @GetMapping("/{id}")
-    public ResponseEntity<Invoice> getInvoiceById(@PathVariable("id") Long id) {
-        Invoice invoice = invoiceService.findById(id);
-        if (invoice != null) {
-            return new ResponseEntity<>(invoice, HttpStatus.OK);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
 
     @PostMapping
     public ResponseEntity<Invoice> createInvoice(@RequestBody Invoice invoice) {
-        invoiceService.save(invoice);
-        return new ResponseEntity<>(invoice, HttpStatus.CREATED);
+        Invoice savedInvoice = invoiceService.createInvoice(invoice);
+        return new ResponseEntity<>(savedInvoice, HttpStatus.CREATED);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Invoice> updateInvoice(@PathVariable("id") Long id, @RequestBody Invoice invoice) {
-        Invoice existingInvoice = invoiceService.findById(id);
-        if (existingInvoice != null) {
-            invoiceService.update(id, invoice);
-            return new ResponseEntity<>(invoice, HttpStatus.OK);
+    // Endpoint gán hóa đơn cho giỏ hàng
+    // Ví dụ: PUT /api/invoices/{invoiceId}/cart/{cartId}
+    @PutMapping("/{invoiceId}/cart/{cartId}")
+    public ResponseEntity<?> assignInvoiceToCart(@PathVariable Long invoiceId, @PathVariable Long cartId) {
+        Optional<Cart> updatedCart = invoiceService.assignInvoiceToCart(cartId, invoiceId);
+        if (updatedCart.isPresent()) {
+            return ResponseEntity.ok(updatedCart.get());
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Cart hoặc Invoice không tồn tại");
         }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteInvoice(@PathVariable("id") Long id) {
-        Invoice existingInvoice = invoiceService.findById(id);
-        if (existingInvoice != null) {
-            invoiceService.delete(id);
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }
