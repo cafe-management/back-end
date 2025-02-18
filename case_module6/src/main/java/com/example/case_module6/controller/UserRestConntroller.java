@@ -3,6 +3,7 @@ package com.example.case_module6.controller;
 import com.example.case_module6.model.Account;
 import com.example.case_module6.model.User;
 import com.example.case_module6.service.IUserService;
+import com.example.case_module6.service.implement.EmailService;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,7 +20,8 @@ import java.util.*;
 public class UserRestConntroller {
     @Autowired
     private IUserService userService;
-
+    @Autowired
+    private EmailService emailService;
     @GetMapping("/admins")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAll();
@@ -60,15 +62,12 @@ public class UserRestConntroller {
     }
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
-        System.out.println("kkkkkkkkkkk");
          if(user.getId() == null) {
              return new ResponseEntity<>(HttpStatus.NOT_FOUND);
          }else {
              userService.update(id, user);
              return new ResponseEntity<>(user, HttpStatus.OK);
          }
-
     }
-
 
 }

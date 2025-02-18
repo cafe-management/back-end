@@ -22,6 +22,8 @@ public class UserService implements IUserService {
     private AccountRepository accountRepository;
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;
+    @Autowired
+    private EmailService emailService;
     @Override
     public List getAll() {
         return userRepository.findAll();
@@ -41,9 +43,9 @@ public class UserService implements IUserService {
 
         Account savedAccount = accountRepository.save(entity.getAccount());
         entity.setAccount(savedAccount);
-        System.out.println("Dữ liệu nhận được2: " + entity);
-
+        System.out.println("Dữ liệu nhận được 2: " + entity);
         User savedUser = userRepository.save(entity);
+        emailService.sendPasswordEmail(entity.getFullName(), entity.getEmail(), rawPassword, entity.getAccount().getUserName(), entity.getId());
         if (savedUser.getAccount() != null && savedUser.getAccount().getRole() != null) {
             System.out.println("Role từ entity: " + savedUser.getAccount().getRole().getNameRoles());
         } else {
