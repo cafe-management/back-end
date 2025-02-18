@@ -1,6 +1,7 @@
 package com.example.case_module6.service.implement;
 
 import com.example.case_module6.model.Invoice;
+import com.example.case_module6.model.News;
 import com.example.case_module6.repository.InvoiceRepository;
 import com.example.case_module6.service.IInvoiceService;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,6 +1,7 @@
 package com.example.case_module6.service.implement;
 
 import com.example.case_module6.model.Drink;
+import com.example.case_module6.model.News;
 import com.example.case_module6.repository.DrinkRepository;
 import com.example.case_module6.service.IDrinkService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,7 @@ import java.util.Optional;
 public class DrinkService implements IDrinkService {
     @Autowired
     private DrinkRepository drinkRepository;
+
     @Override
     public List<Drink> getAll() {
         return drinkRepository.findAll();

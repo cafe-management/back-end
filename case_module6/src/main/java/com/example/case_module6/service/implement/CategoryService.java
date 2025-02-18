@@ -1,7 +1,7 @@
 package com.example.case_module6.service.implement;
 
 import com.example.case_module6.model.Category;
-import com.example.case_module6.model.Drink;
+import com.example.case_module6.model.News;
 import com.example.case_module6.repository.CategoryRepository;
 import com.example.case_module6.service.ICategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
