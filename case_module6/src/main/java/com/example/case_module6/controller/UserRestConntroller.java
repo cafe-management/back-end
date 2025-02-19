@@ -65,10 +65,13 @@ public class UserRestConntroller {
     }
     @PutMapping("/{id}")
     public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
-         if(user.getId() == null) {
-             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-         }else {
+        System.out.println("Id nhận được: " + id);
+        User existingUser = userService.findById(id);
+        if(existingUser == null) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }else {
              userService.update(id, user);
+            System.out.println("User sau khi cập nhật: " + user);
              return new ResponseEntity<>(user, HttpStatus.OK);
          }
     }
