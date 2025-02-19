@@ -28,7 +28,7 @@ public class AccountService implements IAccountService {
     }
 
     @Override
-    public boolean changePassword(String oldPassword, String newPassword) {
+    public boolean changePassword(String userName, String oldPassword, String newPassword) {
         // Lấy thông tin người dùng đã đăng nhập từ SecurityContext
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName(); // Tên đăng nhập của người dùng hiện tại

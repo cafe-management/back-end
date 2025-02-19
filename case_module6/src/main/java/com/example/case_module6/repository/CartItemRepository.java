@@ -1,6 +1,6 @@
 package com.example.case_module6.repository;
 
-import com.example.case_module6.DTO.BestSellingDrinkDTO;
+import com.example.case_module6.dto.BestSellingDrinkDTO;
 import com.example.case_module6.model.CartItem;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;

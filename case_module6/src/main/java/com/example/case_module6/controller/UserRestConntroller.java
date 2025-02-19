@@ -25,7 +25,7 @@ public class UserRestConntroller {
     private IUserService userService;
     @Autowired
     private EmailService emailService;
-    @GetMapping("/admins")
+    @GetMapping("/admin")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAll();
         System.out.println("data: " + users);
@@ -35,7 +35,7 @@ public class UserRestConntroller {
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
 
-    @GetMapping("/admins/check_account")
+    @GetMapping("/admin/check_account")
     public ResponseEntity<Map<String, Boolean>> checkAccount(@RequestParam(required = false) String email,
                                                              @RequestParam(required = false) String username) {
         boolean existsEmail = email != null && userService.existsByEmail(email);
@@ -46,7 +46,7 @@ public class UserRestConntroller {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @PostMapping("/admins")
+    @PostMapping("/admin")
     public ResponseEntity<User> addUser(@RequestBody User user) {
         System.out.println("Dữ liệu nhận được Account: " + user);
         if (user.getAccount() == null) {
