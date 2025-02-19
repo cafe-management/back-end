@@ -1,6 +1,7 @@
 package com.example.case_module6.service.implement;
 
 import com.example.case_module6.model.Cart;
+import com.example.case_module6.model.Customer;
 import com.example.case_module6.model.Feedback;
 import com.example.case_module6.model.Notification;
 import com.example.case_module6.repository.FeedBackRepository;
@@ -24,17 +25,37 @@ public class FeedBackService implements IFeedbackService {
     @Autowired
     private INotificationService notificationService;
 
+    @Autowired
+    private EmailService emailService;
+
     @Override
     public Feedback createFeedback(Feedback feedback) {
         feedback.setDateFeedback(LocalDateTime.now());
+        // Nếu có tableId từ phía client, đảm bảo đã set vào feedback trước khi gọi hàm này
         Feedback savedFeedback = feedBackRepository.save(feedback);
+        Customer customer = savedFeedback.getCustomer();
+        String customerEmail = customer.getEmail();
+        String customerName = customer.getNameCustomer();
         Notification notification = new Notification();
-        notification.setContent("Có Feed Back Mới : # " + savedFeedback.getId());
+
+        // Sửa lại thông báo để hiển thị rõ rằng bàn có feedback
+        String tableInfo = (savedFeedback.getTableId() != null)
+                ? "Bàn: #" + savedFeedback.getTableId() + " có feedback mới."
+                : "Có feedback mới.";
+
+        notification.setContent(tableInfo);
         notification.setDateNote(LocalDateTime.now());
         notificationService.save(notification);
         messagingTemplate.convertAndSend("/topic/notifications", notification);
+
+        if (customerEmail != null && !customerEmail.isEmpty()) {
+            emailService.sendThankYouEmail(customerName, customerEmail, savedFeedback.getId());
+        }
+
         return savedFeedback;
     }
+
+
 
     @Override
     public List<Feedback> getAllFeedback() {

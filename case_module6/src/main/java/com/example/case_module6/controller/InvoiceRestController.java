@@ -1,6 +1,7 @@
 package com.example.case_module6.controller;
 
 import com.example.case_module6.model.Cart;
+import com.example.case_module6.model.Category;
 import com.example.case_module6.model.Invoice;
 import com.example.case_module6.service.IInvoiceService;
 import jakarta.persistence.Column;
@@ -18,6 +19,12 @@ import java.util.Optional;
 public class InvoiceRestController {
     @Autowired
     private IInvoiceService invoiceService;
+
+    @GetMapping
+    public ResponseEntity<List<Invoice>> getAllInvoices() {
+        List<Invoice> invoices=invoiceService.getAllInvoice();
+        return new ResponseEntity<>(invoices, HttpStatus.OK);
+    }
 
     @PostMapping
     public ResponseEntity<Invoice> createInvoice(@RequestBody Invoice invoice) {

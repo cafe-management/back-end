@@ -35,5 +35,8 @@ public class Feedback {
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "feedback_id")
     private List<Image> images = new ArrayList<>();
+
+    @Column(name = "table_id")
+    private Long tableId;
 }
 
