@@ -56,4 +56,14 @@ public class AccountService implements IAccountService {
         System.out.println("Đổi mật khẩu thành công");
         return true;
     }
+
+    @Override
+    public String getRoleIdByUsername(String username) {
+        Account account = accountRepository.findByUserName(username);
+        if (account != null) {
+            return account.getRole().getNameRoles();
+        }
+        return null;
+    }
+
 }
