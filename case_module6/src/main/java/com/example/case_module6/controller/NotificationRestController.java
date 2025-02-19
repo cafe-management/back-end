@@ -47,4 +47,10 @@ public class NotificationRestController {
         notificationService.delete(id);
         return ResponseEntity.ok().build();
     }
+
+    @PutMapping("/mark-all-seen")
+    public ResponseEntity<Void> markAllNotificationsAsSeen() {
+        notificationService.markAllAsSeen();
+        return ResponseEntity.ok().build();
+    }
 }
