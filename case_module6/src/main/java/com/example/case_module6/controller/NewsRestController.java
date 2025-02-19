@@ -26,7 +26,6 @@ public class NewsRestController {
         List<News> newsList = newsService.findAll();
         return ResponseEntity.ok(newsList);
     }
-
     @GetMapping("/{id}")
     public ResponseEntity<News> getNewsById(@PathVariable Long id) {
         News news = newsService.findById(id)
@@ -35,25 +34,59 @@ public class NewsRestController {
     }
 
     @PostMapping
-    public ResponseEntity<News> createNews(@RequestBody News news) {
-        News createdNews = newsService.save(news);
-        messagingTemplate.convertAndSend("/topic/news", "📰 Tin tức mới: " + createdNews.getTitle());
-        messagingTemplate.convertAndSend("/topic/notifications", "📢 Bài viết mới được đăng: " + createdNews.getTitle());
-        return new ResponseEntity<>(createdNews, HttpStatus.CREATED);
+    public ResponseEntity<?> createNews(@RequestBody News news) {
+        try {
+            if (news.getTitle() == null || news.getTitle().trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("⚠️ Tiêu đề tin tức không được để trống!");
+            }
+            if (news.getContent() == null || news.getContent().trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("⚠️ Nội dung tin tức không được để trống!");
+            }
+            News createdNews = newsService.save(news);
+            if (messagingTemplate != null) {
+                messagingTemplate.convertAndSend("/topic/news", "📰 Tin tức mới: " + createdNews.getTitle());
+                messagingTemplate.convertAndSend("/topic/notifications", "📢 Bài viết mới được đăng: " + createdNews.getTitle());
+            }
+            return new ResponseEntity<>(createdNews, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("❌ Lỗi khi tạo tin tức: " + e.getMessage());
+        }
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<News> updateNews(@PathVariable Long id, @RequestBody News newsDetails) {
-        News updatedNews = newsService.updateNews(id, newsDetails);
-        messagingTemplate.convertAndSend("/topic/news", "✍️ Tin tức được cập nhật: " + updatedNews.getTitle());
-        messagingTemplate.convertAndSend("/topic/notifications", "🛠️ Một bài viết đã được cập nhật: " + updatedNews.getTitle());
-        return ResponseEntity.ok(updatedNews);
+    public ResponseEntity<?> updateNews(@PathVariable Long id, @RequestBody News newsDetails) {
+        try {
+            if (newsDetails.getTitle() == null || newsDetails.getTitle().trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("⚠️ Tiêu đề tin tức không được để trống!");
+            }
+            if (newsDetails.getContent() == null || newsDetails.getContent().trim().isEmpty()) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("⚠️ Nội dung tin tức không được để trống!");
+            }
+            News updatedNews = newsService.updateNews(id, newsDetails);
+            if (messagingTemplate != null) {
+                messagingTemplate.convertAndSend("/topic/news", "✍️ Tin tức được cập nhật: " + updatedNews.getTitle());
+                messagingTemplate.convertAndSend("/topic/notifications", "🛠️ Một bài viết đã được cập nhật: " + updatedNews.getTitle());
+            }
+            return ResponseEntity.ok(updatedNews);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("❌ Lỗi khi cập nhật tin tức: " + e.getMessage());
+        }
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteNews(@PathVariable Long id) {
-        newsService.deleteById(id);
-        messagingTemplate.convertAndSend("/topic/notifications", "❌ Một bài viết đã bị xóa: ID " + id);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<?> deleteNews(@PathVariable Long id) {
+        try {
+            newsService.deleteById(id);
+            if (messagingTemplate != null) {
+                messagingTemplate.convertAndSend("/topic/notifications", "❌ Một bài viết đã bị xóa: ID " + id);
+            }
+            return ResponseEntity.noContent().build();
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("❌ Lỗi khi xóa tin tức: " + e.getMessage());
+        }
     }
 }

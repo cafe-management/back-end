@@ -33,12 +33,21 @@ public class NewService implements INewsService {
     public News updateNews(Long id, News newsDetails) {
         News existingNews = newsRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "News not found with id " + id));
-        existingNews.setTitle(newsDetails.getTitle());
-        existingNews.setContent(newsDetails.getContent());
+
+        if (newsDetails == null) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dữ liệu cập nhật không hợp lệ!");
+        }
+        if (newsDetails.getTitle() != null) {
+            existingNews.setTitle(newsDetails.getTitle());
+        }
+        if (newsDetails.getContent() != null) {
+            existingNews.setContent(newsDetails.getContent());
+        }
         if (newsDetails.getImages() != null && !newsDetails.getImages().isEmpty()) {
             existingNews.getImages().clear();
             existingNews.getImages().addAll(newsDetails.getImages());
         }
+
         return newsRepository.save(existingNews);
     }
 
