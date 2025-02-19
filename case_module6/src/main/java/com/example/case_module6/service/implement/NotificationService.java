@@ -18,7 +18,6 @@ public class NotificationService implements INotificationService {
     }
 
     public Notification save(Notification notification) {
-        notificationRepository.save(notification);
         return notificationRepository.save(notification);
     }
 
@@ -32,4 +31,13 @@ public class NotificationService implements INotificationService {
     public void delete(Long id) {
         notificationRepository.deleteById(id);
     }
+    @Override
+    public void markAllAsSeen() {
+        List<Notification> notifications = notificationRepository.findAll();
+        for (Notification notification : notifications) {
+            notification.setSeen(true);
+            notificationRepository.save(notification);
+        }
+    }
+
 }
