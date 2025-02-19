@@ -28,6 +28,7 @@ public class UserRestConntroller {
     @GetMapping("/admin")
     public ResponseEntity<List<User>> getAllUsers() {
         List<User> users = userService.getAll();
+        System.out.println("data: " + users);
         if (users.isEmpty()) {
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         }

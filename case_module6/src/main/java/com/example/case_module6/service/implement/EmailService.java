@@ -41,6 +41,27 @@ public class EmailService {
         }catch (MessagingException e){
             e.printStackTrace();
         }
+    }
 
+    public void sendThankYouEmail(String customerName, String toEmail, Long feedbackId) {
+        try {
+            MimeMessage message = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
+            helper.setTo(toEmail);
+            helper.setSubject("Cảm ơn bạn đã gửi phản hồi - Dana Coffee");
+
+            // Nội dung email cảm ơn
+            StringBuilder emailContent = new StringBuilder();
+            emailContent.append("<p>Xin chào, <strong>").append(customerName).append("</strong>,</p>");
+            emailContent.append("<p>Chúng tôi đã nhận được phản hồi của bạn (#").append(feedbackId).append(").</p>");
+            emailContent.append("<p>Cảm ơn bạn đã dành thời gian chia sẻ ý kiến, chúng tôi sẽ xem xét và phản hồi sớm nhất có thể.</p>");
+            emailContent.append("<p>Chúc bạn một ngày tốt lành!</p>");
+            emailContent.append(getSignature());
+
+            helper.setText(emailContent.toString(), true);
+            mailSender.send(message);
+        } catch (MessagingException e) {
+            e.printStackTrace();
+        }
     }
 }

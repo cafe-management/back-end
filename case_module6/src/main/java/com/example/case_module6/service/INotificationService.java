@@ -9,4 +9,5 @@ public interface INotificationService {
     Notification save(Notification notification);
     Notification findById(Long id);
     void delete(Long id);
+    void markAllAsSeen();
 }

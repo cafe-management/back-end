@@ -22,4 +22,7 @@ public class Notification {
 
     @Column(name = "date_note", nullable = false)
     private LocalDateTime dateNote;
+
+    @Column(nullable = false)
+    private boolean seen = false;
 }

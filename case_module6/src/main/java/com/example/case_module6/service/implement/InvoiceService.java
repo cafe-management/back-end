@@ -21,6 +21,11 @@ public class InvoiceService implements IInvoiceService {
     @Autowired
     private CartRepository cartRepository;
 
+    @Override
+    public List<Invoice> getAllInvoice() {
+        return invoiceRepository.findAll();
+    }
+
     public Invoice createInvoice(Invoice invoice) {
         // Thiết lập thời gian tạo hóa đơn nếu chưa có
         if (invoice.getDateCreate() == null) {

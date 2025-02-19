@@ -3,6 +3,7 @@ package com.example.case_module6.service.implement;
 import com.example.case_module6.model.Cart;
 import com.example.case_module6.model.News;
 import com.example.case_module6.model.Notification;
+import com.example.case_module6.model.TableCoffee;
 import com.example.case_module6.repository.CartRepository;
 import com.example.case_module6.service.ICartService;
 import com.example.case_module6.service.INotificationService;
@@ -61,7 +62,11 @@ public class CartService implements ICartService {
     public Cart saveCart(Cart cart){
         Cart savedCart = cartRepository.save(cart);
         Notification notification = new Notification();
-        notification.setContent("Có Đơn Hàng : #"+savedCart.getId());
+        String tableInfo = (savedCart.getTable() != null) ?
+                " (Table: #" + savedCart.getTable().getId() + ")" :
+                "";
+
+        notification.setContent("Có Đơn Hàng : #" + savedCart.getId() + tableInfo);
         notification.setDateNote(LocalDateTime.now());
         notificationService.save(notification);
         messagingTemplate.convertAndSend("/topic/notifications", notification);
