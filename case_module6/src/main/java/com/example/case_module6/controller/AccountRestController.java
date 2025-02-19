@@ -35,8 +35,11 @@ public class AccountRestController {
             if (isValid) {
                 // Tạo token JWT khi login thành công
 //                String token = createJwtToken(username);
+                String role = accountService.getRoleIdByUsername(username);
                 response.put("success", true);
                 response.put("message", "Đăng nhập thành công");
+                response.put("role", role);
+                System.out.println("Role là: " + role);
                 return new ResponseEntity<>(response, HttpStatus.OK);
             } else {
                 response.put("success", false);
