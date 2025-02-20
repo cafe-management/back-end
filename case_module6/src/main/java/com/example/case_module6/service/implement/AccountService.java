@@ -11,6 +11,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class AccountService implements IAccountService {
     @Autowired
@@ -27,6 +29,11 @@ public class AccountService implements IAccountService {
         System.out.println("Mật khẩu mã hóa trong database: " + account.getPassword());
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder.matches(password, account.getPassword());
+    }
+
+    @Override
+    public List<Account> getAllAccounts() {
+        return accountRepository.findAll();
     }
 
     @Override

@@ -27,11 +27,9 @@ public class InvoiceService implements IInvoiceService {
     }
 
     public Invoice createInvoice(Invoice invoice) {
-        // Thiết lập thời gian tạo hóa đơn nếu chưa có
         if (invoice.getDateCreate() == null) {
             invoice.setDateCreate(LocalDateTime.now());
         }
-        // Các xử lý khác nếu cần
         return invoiceRepository.save(invoice);
     }
 
