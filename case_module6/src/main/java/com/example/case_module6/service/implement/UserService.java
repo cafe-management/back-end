@@ -6,6 +6,7 @@ import com.example.case_module6.model.User;
 import com.example.case_module6.repository.AccountRepository;
 import com.example.case_module6.repository.UserRepository;
 import com.example.case_module6.service.IUserService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -13,6 +14,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -38,7 +41,7 @@ public class UserService implements IUserService {
             entity.setAccount(new Account());
         }
         LocalDateTime time = LocalDateTime.now();
-        String rawPassword = RandomStringUtils.randomAlphanumeric(8);
+        String rawPassword = generateAndStorePassword(entity.getAccount().getUserName());
         String encodedPassword = passwordEncoder.encode(rawPassword);
 
         entity.getAccount().setPassword(encodedPassword);
@@ -107,5 +110,14 @@ public class UserService implements IUserService {
     public Page<User> findAllUser(Pageable pageable) {
         return userRepository.findAll(pageable);
     }
-
+    private String generateAndStorePassword(String username) {
+        String rawPassword = RandomStringUtils.randomAlphanumeric(8);
+        // Lấy session từ RequestContextHolder
+        ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+        if (attributes != null) {
+            HttpSession session = attributes.getRequest().getSession();
+            session.setAttribute("rawPassword_" + username, rawPassword);
+        }
+        return rawPassword;
+    }
 }

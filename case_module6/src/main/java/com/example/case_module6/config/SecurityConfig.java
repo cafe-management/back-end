@@ -33,14 +33,18 @@ public class SecurityConfig {
                 .csrf(csrf -> csrf.disable())
                 .cors(cors -> cors.configurationSource(request -> {
                     var corsConfiguration = new org.springframework.web.cors.CorsConfiguration();
-                    corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000"));
+                    corsConfiguration.setAllowedOrigins(List.of("http://localhost:3000", "http://10.10.8.75:3000"));
                     corsConfiguration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
                     corsConfiguration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
+                    corsConfiguration.setExposedHeaders(List.of("Authorization"));
                     corsConfiguration.setAllowCredentials(true);
                     return corsConfiguration;
                 }))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/login", "/api/login/change-password").permitAll()
+                        .requestMatchers("/", "/**").permitAll()
+                        .requestMatchers("/api/carts", "/api/drinks").permitAll()
+                        .requestMatchers("/api/login").permitAll()
+                        .requestMatchers("/api/login/change-password").authenticated()
                         .requestMatchers("/api/admin/check_account").permitAll()
                         .requestMatchers("/api/admin/**").hasAuthority("admin")
                         .requestMatchers("/api/information", "/api/{id}").hasAuthority("employ")

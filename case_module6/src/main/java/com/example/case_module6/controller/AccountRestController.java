@@ -14,6 +14,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.security.Principal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -32,6 +33,8 @@ public class AccountRestController {
         try {
             String username = loginRequest.get("username");
             String password = loginRequest.get("password");
+            System.out.println("Username: " + username);
+            System.out.println("Password: " + password);
             boolean isValid = accountService.validateLogin(username, password);
             if (isValid) {
 //                 Tạo token JWT khi login thành công
@@ -64,31 +67,41 @@ public class AccountRestController {
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
     }
-@PutMapping("/change-password")
-public ResponseEntity<?> changePassword(
-        @RequestBody ChangePasswordRequest changePasswordRequest,
-        HttpServletRequest request) {
-
-    HttpSession session = request.getSession(false);
-    if (session == null || session.getAttribute("username") == null) {
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn chưa đăng nhập!");
-    }
-
-    String username = (String) session.getAttribute("username");
-    System.out.println("username hiện tại từ session: " + username);
-
-    try {
-        boolean isChanged = accountService.changePassword(username, changePasswordRequest.getOldPassword(), changePasswordRequest.getNewPassword());
-
-        if (isChanged) {
-            return ResponseEntity.ok("Mật khẩu đã được thay đổi thành công!");
-        } else {
-            return ResponseEntity.badRequest().body("Mật khẩu cũ không đúng hoặc có lỗi xảy ra.");
+    @PutMapping("/change-password")
+    public ResponseEntity<?> changePassword(
+            @RequestBody ChangePasswordRequest changePasswordRequest,
+            HttpServletRequest request,  Principal principal) {
+        System.out.println("🎯 Yêu cầu đổi mật khẩu nhận được");
+        System.out.println("👤 Tài khoản đang thực hiện: " + principal.getName());
+        System.out.println("🔑 Mật khẩu cũ: " + changePasswordRequest.getOldPassword());
+        System.out.println("🔐 Mật khẩu mới: " + changePasswordRequest.getNewPassword());
+        HttpSession session = request.getSession(false);
+        if (session == null || session.getAttribute("username") == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn chưa đăng nhập!");
         }
-    } catch (Exception e) {
-        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi trong quá trình thay đổi mật khẩu.");
+
+        String username = (String) session.getAttribute("username");
+        String rawPasswordInSession = (String) session.getAttribute("rawPassword"); // Lấy mật khẩu thô từ session
+        System.out.println("Session ID: " + session.getId());
+        System.out.println("Username từ session: " + session.getAttribute("username"));
+        System.out.println("Mật khẩu thô từ session: " + session.getAttribute("rawPassword"));
+
+        try {
+            boolean isChanged = accountService.changePassword(
+                    username,
+                    changePasswordRequest.getOldPassword(),
+                    changePasswordRequest.getNewPassword(),
+                    rawPasswordInSession
+            );
+            if (isChanged) {
+                return ResponseEntity.ok("Mật khẩu đã được thay đổi thành công!");
+            } else {
+                return ResponseEntity.badRequest().body("Mật khẩu cũ không đúng hoặc có lỗi xảy ra.");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi trong quá trình thay đổi mật khẩu.");
+        }
     }
-}
 
 
 }
