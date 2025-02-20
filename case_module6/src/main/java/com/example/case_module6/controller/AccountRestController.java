@@ -71,27 +71,20 @@ public class AccountRestController {
     public ResponseEntity<?> changePassword(
             @RequestBody ChangePasswordRequest changePasswordRequest,
             HttpServletRequest request,  Principal principal) {
-        System.out.println("🎯 Yêu cầu đổi mật khẩu nhận được");
-        System.out.println("👤 Tài khoản đang thực hiện: " + principal.getName());
-        System.out.println("🔑 Mật khẩu cũ: " + changePasswordRequest.getOldPassword());
-        System.out.println("🔐 Mật khẩu mới: " + changePasswordRequest.getNewPassword());
-        HttpSession session = request.getSession(false);
-        if (session == null || session.getAttribute("username") == null) {
+
+        if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn chưa đăng nhập!");
         }
 
-        String username = (String) session.getAttribute("username");
-        String rawPasswordInSession = (String) session.getAttribute("rawPassword"); // Lấy mật khẩu thô từ session
-        System.out.println("Session ID: " + session.getId());
-        System.out.println("Username từ session: " + session.getAttribute("username"));
-        System.out.println("Mật khẩu thô từ session: " + session.getAttribute("rawPassword"));
+        String username = principal.getName();
+        System.out.println("👤 Tài khoản đang thực hiện: " + username);
 
         try {
             boolean isChanged = accountService.changePassword(
                     username,
                     changePasswordRequest.getOldPassword(),
                     changePasswordRequest.getNewPassword(),
-                    rawPasswordInSession
+                    null  // Không cần rawPasswordInSession nữa
             );
             if (isChanged) {
                 return ResponseEntity.ok("Mật khẩu đã được thay đổi thành công!");
