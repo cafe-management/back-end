@@ -23,39 +23,42 @@ public class AccountService implements IAccountService {
             System.out.println("Không tìm thấy tài khoản với username: " + username);
             return false;
         }
+        System.out.println("Mật khẩu gốc: " + password);
+        System.out.println("Mật khẩu mã hóa trong database: " + account.getPassword());
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         return encoder.matches(password, account.getPassword());
     }
 
     @Override
-    public boolean changePassword(String userName, String oldPassword, String newPassword) {
-        // Lấy thông tin người dùng đã đăng nhập từ SecurityContext
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String username = authentication.getName(); // Tên đăng nhập của người dùng hiện tại
-
-        // Lấy tài khoản từ cơ sở dữ liệu
-        Account account = accountRepository.findByUserName(username);
+    public boolean changePassword(String userName, String oldPassword, String newPassword, String oldPasswordRaw) {
+        Account account = accountRepository.findByUserName(userName);
 
         if (account == null) {
-            // Nếu không tìm thấy tài khoản
             System.out.println("Không tìm thấy tài khoản");
             return false;
         }
-        // Sử dụng BCrypt để kiểm tra mật khẩu cũ
+
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
-        if (!encoder.matches(oldPassword, account.getPassword())) {
-            // Nếu mật khẩu cũ không khớp
-            System.out.println("Mật khẩu cũ không đúng");
-            return false;
+
+        // 🟢 Kiểm tra mật khẩu thô từ session trước
+        if (oldPasswordRaw != null && oldPasswordRaw.equals(oldPassword)) {
+            System.out.println("✅ Mật khẩu khớp với mật khẩu thô trong session");
+        } else {
+            // 🟡 Kiểm tra với mật khẩu đã mã hóa trong database
+            if (!encoder.matches(oldPassword, account.getPassword())) {
+                System.out.println("❌ Mật khẩu cũ không đúng");
+                return false;
+            }
         }
 
-        // Cập nhật mật khẩu mới
+        // 🟢 Mã hóa mật khẩu mới và cập nhật vào database
         account.setPassword(encoder.encode(newPassword));
-        accountRepository.save(account); // Lưu lại tài khoản với mật khẩu đã thay đổi
+        accountRepository.save(account);
 
-        System.out.println("Đổi mật khẩu thành công");
+        System.out.println("✅ Đổi mật khẩu thành công");
         return true;
     }
+
 
     @Override
     public String getRoleIdByUsername(String username) {
