@@ -1,5 +1,6 @@
 package com.example.case_module6.service.implement;
 
+import com.example.case_module6.model.ImageNews;
 import com.example.case_module6.model.News;
 import com.example.case_module6.repository.NewsRepository;
 import com.example.case_module6.service.INewsService;
@@ -37,20 +38,30 @@ public class NewService implements INewsService {
         if (newsDetails == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dữ liệu cập nhật không hợp lệ!");
         }
+
+        // Cập nhật tiêu đề và nội dung nếu có
         if (newsDetails.getTitle() != null) {
             existingNews.setTitle(newsDetails.getTitle());
         }
         if (newsDetails.getContent() != null) {
             existingNews.setContent(newsDetails.getContent());
         }
+
+        // Xử lý danh sách hình ảnh:
+        // Xóa sạch danh sách ảnh hiện có để đồng bộ hoàn toàn với payload
+        existingNews.getImages().clear();
+
+        // Nếu payload có danh sách hình ảnh, thêm từng ảnh vào danh sách
         if (newsDetails.getImages() != null && !newsDetails.getImages().isEmpty()) {
-            existingNews.getImages().clear();
-            existingNews.getImages().addAll(newsDetails.getImages());
+            for (ImageNews image : newsDetails.getImages()) {
+                // Đảm bảo set lại mối quan hệ với News
+                image.setNews(existingNews);
+                existingNews.getImages().add(image);
+            }
         }
 
         return newsRepository.save(existingNews);
     }
-
 
     @Override
     public void deleteById(Long id) {
