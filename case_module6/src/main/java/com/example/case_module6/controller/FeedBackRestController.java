@@ -2,9 +2,11 @@ package com.example.case_module6.controller;
 
 import com.example.case_module6.model.Feedback;
 import com.example.case_module6.service.IFeedbackService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -21,7 +23,10 @@ public class FeedBackRestController {
     private IFeedbackService feedbackService;
 
     @PostMapping
-    public ResponseEntity<Feedback> createFeedback(@RequestBody Feedback feedback) {
+    public ResponseEntity<?> createFeedback(@Valid @RequestBody Feedback feedback, BindingResult result) {
+        if (result.hasErrors()) {
+            return ResponseEntity.badRequest().body(result.getAllErrors());
+        }
         Feedback createdFeedback = feedbackService.createFeedback(feedback);
         return ResponseEntity.ok(createdFeedback);
     }

@@ -1,6 +1,7 @@
  package com.example.case_module6.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDateTime;
@@ -29,6 +30,7 @@ public class Feedback {
     @JoinColumn(name = "customer_id", referencedColumnName = "id")
     private Customer customer;
 
+    @NotBlank(message = "Nội dung phản hồi không được để trống")
     @Column(nullable = false)
     private String content;
 
