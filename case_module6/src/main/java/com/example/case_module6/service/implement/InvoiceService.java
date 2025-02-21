@@ -10,6 +10,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +30,7 @@ public class InvoiceService implements IInvoiceService {
 
     public Invoice createInvoice(Invoice invoice) {
         if (invoice.getDateCreate() == null) {
-            invoice.setDateCreate(LocalDateTime.now());
+            invoice.setDateCreate(OffsetDateTime.now(ZoneOffset.ofHours(7)));
         }
         return invoiceRepository.save(invoice);
     }
