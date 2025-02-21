@@ -1,11 +1,16 @@
 package com.example.case_module6.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import jakarta.persistence.*;
 import lombok.*;
 import java.util.List;
-
+@JsonIdentityInfo(
+        generator = ObjectIdGenerators.PropertyGenerator.class,
+        property = "id"
+)
 @Entity
 @Getter
 @Setter
@@ -27,6 +32,5 @@ public class Cart {
 
     @ManyToOne
     @JoinColumn(name = "invoice_id")
-    @JsonBackReference
     private Invoice invoice;
 }

@@ -78,8 +78,10 @@ public class AccountRestController {
         if (principal == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Bạn chưa đăng nhập!");
         }
+
         String username = principal.getName();
         System.out.println("👤 Tài khoản đang thực hiện: " + username);
+
         try {
             boolean isChanged = accountService.changePassword(
                     username,
