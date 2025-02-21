@@ -71,6 +71,9 @@ public class UserService implements IUserService {
             if (entity.getPhoneNumber() != null) {
                 existingUser.setPhoneNumber(entity.getPhoneNumber());
             }
+            if (entity.getGender() != null){
+                existingUser.setGender(entity.getGender());
+            }
             if (entity.getAccount() != null && entity.getAccount().getPassword() != null) {
                 String newPassword = entity.getAccount().getPassword();
                 BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();

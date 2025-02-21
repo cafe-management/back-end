@@ -36,6 +36,7 @@ public class JwtFilter extends OncePerRequestFilter {
         String authorizationHeader = request.getHeader("Authorization");
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             String token = authorizationHeader.substring(7);
+            System.out.println("Token nhận được: " + token);
             try {
                 String username = Jwts.parser()
                         .setSigningKey(secretKey)
