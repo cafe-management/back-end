@@ -33,10 +33,16 @@ public class AccountService implements IAccountService {
     private PasswordEncoder passwordEncoder;
     @Override
     public boolean validateLogin(String username, String password) {
+        System.out.println("Username: " + username + " Password: " + password);
         Account account = accountRepository.findByUserName(username);
+        System.out.println("account: " + account);
         if (account == null) {
             return false;
         }
+        System.out.println("Mật khẩu nhập vào: " + password);
+        System.out.println("Mật khẩu trong DB: " + account.getPassword());
+        boolean isMatch = passwordEncoder.matches(password, account.getPassword());
+        System.out.println("Mật khẩu có khớp không? " + isMatch);
         return passwordEncoder.matches(password, account.getPassword());
     }
 
