@@ -9,6 +9,7 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.DateTimeException;
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 import java.util.Date;
 import java.util.List;
 @JsonIdentityInfo(
@@ -30,10 +31,10 @@ public class Invoice {
     private String codeInvoice;
 
     @Column(name = "date_create", nullable = false)
-    private LocalDateTime dateCreate;
+    private OffsetDateTime dateCreate;
 
     @Column(name = "date_payment")
-    private LocalDateTime datePayment;
+    private OffsetDateTime datePayment;
 
     @Column(name = "status_order", nullable = false)
     private Boolean statusOrder;
