@@ -77,6 +77,7 @@ public class EmailService {
                 emailContent.append("<p>Bạn đã yêu cầu đặt lại mật khẩu.</p>");
                 emailContent.append("<p>Mã OTP của bạn là: <b>" + otp + "</b></p>");
                 emailContent.append("<p>OTP này có hiệu lực trong 30 phút.</p>");
+                emailContent.append("<p><b><i>Lưu ý: Không chia sẻ mã OTP này cho bất kỳ ai</i></b></p>");
                 emailContent.append(getSignature());
 
                 helper.setText(emailContent.toString(), true);
