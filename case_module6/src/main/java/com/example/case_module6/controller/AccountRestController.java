@@ -1,5 +1,8 @@
 package com.example.case_module6.controller;
 import com.example.case_module6.dto.ChangePasswordRequest;
+import com.example.case_module6.dto.ForGotPassWordDTO;
+import com.example.case_module6.dto.ResetPasswordDTO;
+import com.example.case_module6.dto.VerifyOtpDTO;
 import com.example.case_module6.model.Account;
 import com.example.case_module6.service.IAccountService;
 import io.jsonwebtoken.Jwts;
@@ -17,11 +20,10 @@ import org.springframework.web.bind.annotation.*;
 import java.security.Principal;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(origins = "*")
+@CrossOrigin(value = "*")
 @RequestMapping("api/login")
 public class AccountRestController {
     @Value("${jwt.secret}")
@@ -96,10 +98,19 @@ public class AccountRestController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Đã xảy ra lỗi trong quá trình thay đổi mật khẩu.");
         }
     }
-
-    @GetMapping
-    public ResponseEntity<List<Account>> getAllAccounts() {
-        List<Account> accounts = accountService.getAllAccounts();
-        return ResponseEntity.ok(accounts);
+    @PostMapping("/forgot-password")
+    public ResponseEntity<?> forgotPassword(@RequestBody ForGotPassWordDTO request){
+        Map<String, Object> response = accountService.forgotPassword(request.getEmailOrUsername());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    @PostMapping("/verify-otp")
+    public ResponseEntity<?> verifyOtp(@RequestBody VerifyOtpDTO request){
+        Map<String, Object> response = accountService.verifyOtp(request.getEmailOrUsername(), request.getOtp());
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+    @PutMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody ResetPasswordDTO request){
+        Map<String, Object> response = accountService.newPassword(request.getEmailOrUsername(), request.getNewPassword());
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
 }
