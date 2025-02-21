@@ -4,6 +4,7 @@
     import lombok.*;
 
     import java.math.BigDecimal;
+    import java.util.UUID;
 
     @Entity
     @Getter
@@ -31,4 +32,8 @@
 
         @Column(name = "img_drinks")
         private String imgDrinks;
+        @PrePersist
+        protected void onCreate() {
+            this.maSoMon = UUID.randomUUID().toString();
+        }
     }
