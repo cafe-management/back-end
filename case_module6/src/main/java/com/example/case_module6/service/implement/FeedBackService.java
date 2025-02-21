@@ -8,6 +8,8 @@ import com.example.case_module6.repository.FeedBackRepository;
 import com.example.case_module6.service.IFeedbackService;
 import com.example.case_module6.service.INotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
@@ -31,14 +33,11 @@ public class FeedBackService implements IFeedbackService {
     @Override
     public Feedback createFeedback(Feedback feedback) {
         feedback.setDateFeedback(LocalDateTime.now());
-        // Nếu có tableId từ phía client, đảm bảo đã set vào feedback trước khi gọi hàm này
         Feedback savedFeedback = feedBackRepository.save(feedback);
         Customer customer = savedFeedback.getCustomer();
         String customerEmail = customer.getEmail();
         String customerName = customer.getNameCustomer();
         Notification notification = new Notification();
-
-        // Sửa lại thông báo để hiển thị rõ rằng bàn có feedback
         String tableInfo = (savedFeedback.getTableId() != null)
                 ? "Bàn: #" + savedFeedback.getTableId() + " có feedback mới."
                 : "Có feedback mới.";
@@ -55,11 +54,9 @@ public class FeedBackService implements IFeedbackService {
         return savedFeedback;
     }
 
-
-
     @Override
-    public List<Feedback> getAllFeedback() {
-        return feedBackRepository.findAll();
+    public Page<Feedback> getAllFeedback(Pageable pageable) {
+        return feedBackRepository.findAll(pageable);
     }
 
     @Override
@@ -67,7 +64,8 @@ public class FeedBackService implements IFeedbackService {
         return feedBackRepository.findById(id).get();
     }
 
-    public List<Feedback> getFeedbacksByDate(LocalDateTime start, LocalDateTime end) {
-        return feedBackRepository.findByDateFeedbackBetween(start, end);
+    @Override
+    public Page<Feedback> getFeedbacksByDate(LocalDateTime start, LocalDateTime end, Pageable pageable) {
+        return feedBackRepository.findByDateFeedbackBetween(start, end, pageable);
     }
 }

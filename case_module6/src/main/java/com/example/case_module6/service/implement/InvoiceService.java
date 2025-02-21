@@ -7,6 +7,8 @@ import com.example.case_module6.repository.InvoiceRepository;
 import com.example.case_module6.service.IInvoiceService;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -24,8 +26,8 @@ public class InvoiceService implements IInvoiceService {
     private CartRepository cartRepository;
 
     @Override
-    public List<Invoice> getAllInvoice() {
-        return invoiceRepository.findAll();
+    public Page<Invoice> getAllInvoice(Pageable pageable) {
+        return invoiceRepository.findAll(pageable);
     }
 
     public Invoice createInvoice(Invoice invoice) {
