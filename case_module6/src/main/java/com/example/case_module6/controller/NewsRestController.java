@@ -56,13 +56,20 @@ public class NewsRestController {
     @PutMapping("/{id}")
     public ResponseEntity<?> updateNews(@PathVariable Long id, @RequestBody News newsDetails) {
         try {
+            // Kiểm tra dữ liệu bắt buộc: tiêu đề và nội dung không được để trống
             if (newsDetails.getTitle() == null || newsDetails.getTitle().trim().isEmpty()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("⚠️ Tiêu đề tin tức không được để trống!");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("⚠️ Tiêu đề tin tức không được để trống!");
             }
             if (newsDetails.getContent() == null || newsDetails.getContent().trim().isEmpty()) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("⚠️ Nội dung tin tức không được để trống!");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("⚠️ Nội dung tin tức không được để trống!");
             }
+
+            // Gọi hàm cập nhật trong service (đã được điều chỉnh để xử lý danh sách ảnh)
             News updatedNews = newsService.updateNews(id, newsDetails);
+
+            // Gửi thông báo nếu có cấu hình SimpMessagingTemplate
             if (messagingTemplate != null) {
                 messagingTemplate.convertAndSend("/topic/news", "✍️ Tin tức được cập nhật: " + updatedNews.getTitle());
                 messagingTemplate.convertAndSend("/topic/notifications", "🛠️ Một bài viết đã được cập nhật: " + updatedNews.getTitle());
@@ -71,9 +78,11 @@ public class NewsRestController {
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("❌ Lỗi khi cập nhật tin tức: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("❌ Lỗi khi cập nhật tin tức: " + e.getMessage());
         }
     }
+
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteNews(@PathVariable Long id) {
