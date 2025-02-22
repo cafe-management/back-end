@@ -6,6 +6,9 @@ import com.example.case_module6.model.Invoice;
 import com.example.case_module6.service.IInvoiceService;
 import jakarta.persistence.Column;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -21,8 +24,11 @@ public class InvoiceRestController {
     private IInvoiceService invoiceService;
 
     @GetMapping
-    public ResponseEntity<List<Invoice>> getAllInvoices() {
-        List<Invoice> invoices=invoiceService.getAllInvoice();
+    public ResponseEntity<Page<Invoice>> getAllInvoices(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Invoice> invoices = invoiceService.getAllInvoice(pageable);
         return new ResponseEntity<>(invoices, HttpStatus.OK);
     }
 

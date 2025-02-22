@@ -4,6 +4,9 @@ import com.example.case_module6.model.Feedback;
 import com.example.case_module6.service.IFeedbackService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
@@ -32,8 +35,11 @@ public class FeedBackRestController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Feedback>> getAllFeedback() {
-        List<Feedback> feedbacks = feedbackService.getAllFeedback();
+    public ResponseEntity<Page<Feedback>> getAllFeedback(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Feedback> feedbacks = feedbackService.getAllFeedback(pageable);
         return ResponseEntity.ok(feedbacks);
     }
 
@@ -47,11 +53,14 @@ public class FeedBackRestController {
     }
 
     @GetMapping("/search")
-    public ResponseEntity<List<Feedback>> getFeedbacksByDate(
-            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
+    public ResponseEntity<Page<Feedback>> getFeedbacksByDate(
+            @RequestParam("date") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
         LocalDateTime startOfDay = date.atStartOfDay();
         LocalDateTime endOfDay = date.atTime(LocalTime.MAX);
-        List<Feedback> feedbacks = feedbackService.getFeedbacksByDate(startOfDay, endOfDay);
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Feedback> feedbacks = feedbackService.getFeedbacksByDate(startOfDay, endOfDay, pageable);
         return ResponseEntity.ok(feedbacks);
     }
 }
