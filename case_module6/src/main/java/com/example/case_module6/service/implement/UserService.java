@@ -74,6 +74,21 @@ public class UserService implements IUserService {
             if (entity.getGender() != null){
                 existingUser.setGender(entity.getGender());
             }
+            if (entity.getFullName() != null){
+                existingUser.setFullName(entity.getFullName());
+            }
+            if(entity.getEmail() != null){
+                existingUser.setEmail(entity.getEmail());
+            }
+            if(entity.getBirthDate() != null){
+                existingUser.setBirthDate(entity.getBirthDate());
+            }
+            if (entity.getSalary() != null) {
+                existingUser.setSalary(entity.getSalary());
+            }
+            if (entity.getAccount().getUserName() != null) {
+                existingUser.getAccount().setUserName(entity.getAccount().getUserName());
+            }
             if (entity.getAccount() != null && entity.getAccount().getPassword() != null) {
                 String newPassword = entity.getAccount().getPassword();
                 BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder();
@@ -111,7 +126,7 @@ public class UserService implements IUserService {
 
     @Override
     public Page<User> findAllUser(Pageable pageable) {
-        return userRepository.findAll(pageable);
+        return userRepository.findAllActiveUsers(pageable);
     }
     private String generateAndStorePassword(String username) {
         String rawPassword = RandomStringUtils.randomAlphanumeric(8);

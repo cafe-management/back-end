@@ -36,11 +36,9 @@ public class AccountRestController {
         try {
             String username = loginRequest.get("username");
             String password = loginRequest.get("password");
-            System.out.println("Username: " + username);
-            System.out.println("Password: " + password);
-            boolean isValid = accountService.validateLogin(username, password);
-            if (isValid) {
-//                 Tạo token JWT khi login thành công
+            Map<String, Object> loginResult = accountService.validateLogin(username, password);
+            boolean success = (boolean) loginResult.get("success");
+            if (success) {
                 String token = createJwtToken(username);
                 String role = accountService.getRoleIdByUsername(username);
                 request.getSession().setAttribute("username", username);
@@ -52,7 +50,7 @@ public class AccountRestController {
                 return new ResponseEntity<>(response, HttpStatus.OK);
             } else {
                 response.put("success", false);
-                response.put("message", "Sai tên đăng nhập hoặc mật khẩu......");
+                response.put("message", loginResult.get("message"));
                 return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
             }
         } catch (Exception e) {
@@ -69,6 +67,16 @@ public class AccountRestController {
                 .setExpiration(new Date(System.currentTimeMillis() + expirationTime))
                 .signWith(SignatureAlgorithm.HS256, secretKey)
                 .compact();
+    }
+    @PutMapping("/lock/{id}")
+    public ResponseEntity<Map<String, Object>> lockAccount(@PathVariable Long id) {
+        Map<String, Object> response = accountService.lockAccount(id);
+        boolean success = (boolean) response.get("success");
+        if (success) {
+            return ResponseEntity.ok(response);
+        } else {
+            return ResponseEntity.badRequest().body(response);
+        }
     }
     @PutMapping("/change-password")
     public ResponseEntity<?> changePassword(

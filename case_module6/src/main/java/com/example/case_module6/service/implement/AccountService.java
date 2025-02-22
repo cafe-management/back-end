@@ -32,34 +32,27 @@ public class AccountService implements IAccountService {
     @Autowired
     private PasswordEncoder passwordEncoder;
     @Override
-    public boolean validateLogin(String username, String password) {
-        System.out.println("Username: " + username + " Password: " + password);
+    public Map<String, Object> validateLogin(String username, String password) {
         Account account = accountRepository.findByUserName(username);
-        System.out.println("account: " + account);
-        if (account == null) {
-            return false;
-        }
-        System.out.println("Mật khẩu nhập vào: " + password);
-        System.out.println("Mật khẩu trong DB: " + account.getPassword());
-        boolean isMatch = passwordEncoder.matches(password, account.getPassword());
-        System.out.println("Mật khẩu có khớp không? " + isMatch);
-        return passwordEncoder.matches(password, account.getPassword());
-    }
 
+        if (account == null || account.isLocked()) {
+            return Map.of("success", false, "message", "Tài khoản không tồn tại");
+        }
+        return Map.of("success", true, "message", "Đăng nhập thành công");
+    }
     @Override
     public boolean changePassword(String userName, String oldPassword, String newPassword, String oldPasswordRaw) {
         Account account = accountRepository.findByUserName(userName);
         if (account == null) {
             return false;
         }
-        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         if (oldPasswordRaw != null && oldPasswordRaw.equals(oldPassword)) {
         } else {
-            if (!encoder.matches(oldPassword, account.getPassword())) {
+            if (!passwordEncoder.matches(oldPassword, account.getPassword())) {
                 return false;
             }
         }
-        account.setPassword(encoder.encode(newPassword));
+        account.setPassword(passwordEncoder.encode(newPassword));
         accountRepository.save(account);
         return true;
     }
@@ -109,6 +102,19 @@ public class AccountService implements IAccountService {
         account.setPassword(passwordEncoder.encode(password));
         accountRepository.save(account);
         return Map.of("success", true, "message", "Mật khẩu đã được cập nhật thành công");
+    }
+
+    @Override
+    public Map<String, Object> lockAccount(Long accountId) {
+            Optional<Account> optionalAccount = accountRepository.findById(accountId);
+            if (optionalAccount.isEmpty()) {
+                return Map.of("success", false, "message", "Tài khoản không tồn tại");
+            }
+            Account account = optionalAccount.get();
+            account.setLocked(true);
+            accountRepository.save(account);
+            return Map.of("success", true, "message", "Tài khoản đã bị khóa thành công.");
+
     }
 
 
