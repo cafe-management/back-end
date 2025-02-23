@@ -1,8 +1,10 @@
 package com.example.case_module6.controller;
 
+import com.example.case_module6.model.Account;
 import com.example.case_module6.model.News;
 import com.example.case_module6.model.NewsStatus;
 import com.example.case_module6.model.User;
+import com.example.case_module6.service.IAccountService;
 import com.example.case_module6.service.INewsService;
 import com.example.case_module6.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +25,8 @@ public class NewsRestController {
 
     @Autowired
     private INewsService newsService;
-
+    @Autowired
+    private IAccountService accountService;
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
     @Autowired
@@ -33,8 +36,18 @@ public class NewsRestController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName();
         String role = authentication.getAuthorities().iterator().next().getAuthority();
-        List<News> newsList = newsService.findAll(username, role);
+        List<News> newsList = newsService.findAll(username, role, NewsStatus.APPROVED);
         return ResponseEntity.ok(newsList);
+    }
+    @GetMapping("/pending")
+    public ResponseEntity<List<News>> getPendingNews() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        String role = authentication.getAuthorities().iterator().next().getAuthority();
+        System.out.println("Người dùng hiện tại: " + authentication.getName());
+        System.out.println("Quyền hiện tại: " + authentication.getAuthorities());
+        List<News> pendingNews = newsService.findAll(username, role, NewsStatus.PENDING);
+        return ResponseEntity.ok(pendingNews);
     }
     @GetMapping("/{id}")
     public ResponseEntity<News> getNewsById(@PathVariable Long id) {
@@ -117,12 +130,7 @@ public class NewsRestController {
     public ResponseEntity<?> approveNews(@PathVariable Long id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String username = authentication.getName(); // Lấy username từ token đã xác thực
-        User user = userService.getUserByUsername(username);
-
-
-        if (user == null || !user.getAccount().getRole().equals("admin")) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Bạn không có quyền duyệt bài!");
-        }
+        Account account = accountService.findAccountByUsername(username);
         Optional<News> optionalNews = newsService.findById(id);
         if (optionalNews.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy bài viết!");
@@ -130,8 +138,23 @@ public class NewsRestController {
         News news = optionalNews.get();
 
         news.setStatus(NewsStatus.APPROVED);
-        newsService.updateNews(id, news, username, user.getAccount().getRole().getNameRoles());
+        newsService.updateNews(id, news, username, account.getRole().getNameRoles());
         return ResponseEntity.ok("Bài viết đã được duyệt!");
+    }
+    @PutMapping("/{id}/reject")
+    public ResponseEntity<?> rejectNews(@PathVariable Long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName(); // Lấy username từ token đã xác thực
+        Account account = accountService.findAccountByUsername(username);
+        Optional<News> optionalNews = newsService.findById(id);
+        if (optionalNews.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy bài viết!");
+        }
+        News news = optionalNews.get();
+        news.setStatus(NewsStatus.REJECTED);
+        newsService.updateNews(id, news, username, account.getRole().getNameRoles());
+
+        return ResponseEntity.ok("Bài viết đã bị từ chối!");
     }
 
 }

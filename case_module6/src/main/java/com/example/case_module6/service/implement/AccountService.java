@@ -125,5 +125,10 @@ public class AccountService implements IAccountService {
         return Map.of("success", true, "message", "Tài khoản đã bị khóa");
     }
 
+    @Override
+    public Account findAccountByUsername(String username) {
+        return accountRepository.findByUserName(username);
+    }
+
 
 }

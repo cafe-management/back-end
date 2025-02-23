@@ -13,4 +13,5 @@ public interface IAccountService {
     Map<String, Object> verifyOtp(String emailOrUsername, String otp);
     Map<String,Object> newPassword(String emailOrUsername, String password);
     Map<String, Object> lockAccount(Long accountId);
+    Account findAccountByUsername(String username);
 }

@@ -17,10 +17,10 @@ public class NewService implements INewsService {
     @Autowired
     private NewsRepository newsRepository;
     @Override
-    public List<News> findAll(String username, String role) {
-        if(role.equals("admin")){
-            return newsRepository.findAll();
-        }else {
+    public List<News> findAll(String username, String role, NewsStatus status) {
+        if (role.equals("admin")) {
+            return newsRepository.findByStatus(status);
+        } else {
             return newsRepository.findByCreatedBy(username);
         }
     }
