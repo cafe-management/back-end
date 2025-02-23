@@ -105,16 +105,24 @@ public class AccountService implements IAccountService {
     }
 
     @Override
-    public Map<String, Object> lockAccount(Long accountId) {
-            Optional<Account> optionalAccount = accountRepository.findById(accountId);
-            if (optionalAccount.isEmpty()) {
-                return Map.of("success", false, "message", "Tài khoản không tồn tại");
-            }
-            Account account = optionalAccount.get();
-            account.setLocked(true);
-            accountRepository.save(account);
-            return Map.of("success", true, "message", "Tài khoản đã bị khóa thành công.");
+    public Map<String, Object> lockAccount(Long userId) {
+        Optional<User> optionalUser = userRepository.findById(userId);
+        if (optionalUser.isEmpty()) {
+            return Map.of("success", false, "message", "Người dùng không tồn tại");
+        }
 
+        User user = optionalUser.get();
+        Account account = user.getAccount(); // Lấy account từ user
+
+        if (account == null) {
+            return Map.of("success", false, "message", "Tài khoản không tồn tại");
+        }
+
+        // Cập nhật trạng thái khóa
+        account.setLocked(true);
+        accountRepository.save(account);
+
+        return Map.of("success", true, "message", "Tài khoản đã bị khóa");
     }
 
 

@@ -11,9 +11,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.apache.commons.lang3.RandomStringUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
@@ -21,6 +23,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
+@Transactional
 public class UserService implements IUserService {
     @Autowired
     private UserRepository userRepository;
@@ -125,8 +128,10 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public Page<User> findAllUser(Pageable pageable) {
-        return userRepository.findAllActiveUsers(pageable);
+    public Page<User> findAllUser(Pageable pageable, String search) {
+        Page<User> users = userRepository.findAllActiveUsers(pageable, search);
+        System.out.println("Số nhân viên lấy được: " + users.getNumberOfElements());
+        return userRepository.findAllActiveUsers(PageRequest.of(pageable.getPageNumber(), pageable.getPageSize(), Sort.by("id").ascending()), search);
     }
     private String generateAndStorePassword(String username) {
         String rawPassword = RandomStringUtils.randomAlphanumeric(8);

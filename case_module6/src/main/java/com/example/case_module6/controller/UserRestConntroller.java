@@ -28,9 +28,12 @@ public class UserRestConntroller {
     @GetMapping("/admin")
     ResponseEntity<Page<User>> getAllUsers(
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "5") int size) {
+            @RequestParam(defaultValue = "4") int size,
+            @RequestParam(defaultValue = "") String search) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<User> users = userService.findAllUser(pageable);
+        System.out.println("Backend nhận page = " + page);
+        Page<User> users = userService.findAllUser(pageable,  search);
+        System.out.println("Danh sách nhân viên từ API: " + users.getContent());
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
     @GetMapping("/admin/check_account")
