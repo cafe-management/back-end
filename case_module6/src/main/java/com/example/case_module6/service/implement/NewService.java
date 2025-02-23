@@ -2,6 +2,7 @@ package com.example.case_module6.service.implement;
 
 import com.example.case_module6.model.ImageNews;
 import com.example.case_module6.model.News;
+import com.example.case_module6.model.NewsStatus;
 import com.example.case_module6.repository.NewsRepository;
 import com.example.case_module6.service.INewsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,8 +17,12 @@ public class NewService implements INewsService {
     @Autowired
     private NewsRepository newsRepository;
     @Override
-    public List<News> findAll() {
-        return newsRepository.findAll();
+    public List<News> findAll(String username, String role, NewsStatus status) {
+        if (role.equals("admin")) {
+            return newsRepository.findByStatus(status);
+        } else {
+            return newsRepository.findByCreatedBy(username);
+        }
     }
 
     @Override
@@ -26,20 +31,38 @@ public class NewService implements INewsService {
     }
 
     @Override
-    public News save(News news) {
+    public News save(News news, String username, String role) {
+        if ("admin".equals(role)) {
+            news.setStatus(NewsStatus.APPROVED);
+        } else {
+            news.setStatus(NewsStatus.PENDING);
+        }
+        news.setCreatedBy(username); // Gán người tạo bài viết
         return newsRepository.save(news);
     }
 
     @Override
-    public News updateNews(Long id, News newsDetails) {
+    public News updateNews(Long id, News newsDetails,  String username, String role) {
         News existingNews = newsRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "News not found with id " + id));
-
+        if ("admin".equals(role)) {
+            return updateExistingNews(existingNews, newsDetails);
+        }
         if (newsDetails == null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Dữ liệu cập nhật không hợp lệ!");
         }
+        if (!existingNews.getCreatedBy().equals(username)) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "Bạn không có quyền sửa tin này!");
+        }
 
+        if (existingNews.getStatus() != NewsStatus.PENDING) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Bạn chỉ có thể chỉnh sửa tin khi đang chờ duyệt!");
+        }
+        return updateExistingNews(existingNews, newsDetails);
+    }
         // Cập nhật tiêu đề và nội dung nếu có
+
+    private News updateExistingNews(News existingNews, News newsDetails) {
         if (newsDetails.getTitle() != null) {
             existingNews.setTitle(newsDetails.getTitle());
         }
@@ -47,27 +70,25 @@ public class NewService implements INewsService {
             existingNews.setContent(newsDetails.getContent());
         }
 
-        // Xử lý danh sách hình ảnh:
-        // Xóa sạch danh sách ảnh hiện có để đồng bộ hoàn toàn với payload
         existingNews.getImages().clear();
-
-        // Nếu payload có danh sách hình ảnh, thêm từng ảnh vào danh sách
         if (newsDetails.getImages() != null && !newsDetails.getImages().isEmpty()) {
             for (ImageNews image : newsDetails.getImages()) {
-                // Đảm bảo set lại mối quan hệ với News
                 image.setNews(existingNews);
                 existingNews.getImages().add(image);
             }
         }
-
         return newsRepository.save(existingNews);
     }
-
     @Override
     public void deleteById(Long id) {
         if (!newsRepository.existsById(id)) {
             throw new ResponseStatusException(HttpStatus.NOT_FOUND, "News not found with id " + id);
         }
         newsRepository.deleteById(id);
+    }
+
+    @Override
+    public List<News> findByStatus(NewsStatus status) {
+        return newsRepository.findByStatus(status);
     }
 }

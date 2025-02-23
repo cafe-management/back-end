@@ -31,4 +31,6 @@ public class Account {
     @JoinColumn(name = "role_id", referencedColumnName = "id")
     @JsonIgnoreProperties("accounts")
     private Role role;
+    @Column(name = "is_locked", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private boolean isLocked;
 }

@@ -34,4 +34,9 @@ public class News {
     @OneToMany(mappedBy = "news", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.EAGER)
     @JsonManagedReference
     private List<ImageNews> images = new ArrayList<>();
+    @Column(name = "created_by", nullable = false)
+    private String createdBy;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    private NewsStatus status = NewsStatus.PENDING;
 }

@@ -26,15 +26,16 @@ public class UserRestConntroller {
     @Autowired
     private EmailService emailService;
     @GetMapping("/admin")
-    public ResponseEntity<List<User>> getAllUsers() {
-        List<User> users = userService.getAll();
-        System.out.println("data: " + users);
-        if (users.isEmpty()) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        }
+    ResponseEntity<Page<User>> getAllUsers(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "4") int size,
+            @RequestParam(defaultValue = "") String search) {
+        Pageable pageable = PageRequest.of(page, size);
+        System.out.println("Backend nhận page = " + page);
+        Page<User> users = userService.findAllUser(pageable,  search);
+        System.out.println("Danh sách nhân viên từ API: " + users.getContent());
         return new ResponseEntity<>(users, HttpStatus.OK);
     }
-
     @GetMapping("/admin/check_account")
     public ResponseEntity<Map<String, Boolean>> checkAccount(@RequestParam(required = false) String email,
                                                              @RequestParam(required = false) String username) {

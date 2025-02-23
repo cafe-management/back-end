@@ -1,14 +1,22 @@
 package com.example.case_module6.controller;
 
+import com.example.case_module6.model.Account;
 import com.example.case_module6.model.News;
+import com.example.case_module6.model.NewsStatus;
+import com.example.case_module6.model.User;
+import com.example.case_module6.service.IAccountService;
 import com.example.case_module6.service.INewsService;
+import com.example.case_module6.service.IUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/news")
@@ -17,14 +25,29 @@ public class NewsRestController {
 
     @Autowired
     private INewsService newsService;
-
+    @Autowired
+    private IAccountService accountService;
     @Autowired
     private SimpMessagingTemplate messagingTemplate;
-
+    @Autowired
+    private IUserService userService;
     @GetMapping
     public ResponseEntity<List<News>> getAllNews() {
-        List<News> newsList = newsService.findAll();
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        String role = authentication.getAuthorities().iterator().next().getAuthority();
+        List<News> newsList = newsService.findAll(username, role, NewsStatus.APPROVED);
         return ResponseEntity.ok(newsList);
+    }
+    @GetMapping("/pending")
+    public ResponseEntity<List<News>> getPendingNews() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        String role = authentication.getAuthorities().iterator().next().getAuthority();
+        System.out.println("Người dùng hiện tại: " + authentication.getName());
+        System.out.println("Quyền hiện tại: " + authentication.getAuthorities());
+        List<News> pendingNews = newsService.findAll(username, role, NewsStatus.PENDING);
+        return ResponseEntity.ok(pendingNews);
     }
     @GetMapping("/{id}")
     public ResponseEntity<News> getNewsById(@PathVariable Long id) {
@@ -42,7 +65,11 @@ public class NewsRestController {
             if (news.getContent() == null || news.getContent().trim().isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("⚠️ Nội dung tin tức không được để trống!");
             }
-            News createdNews = newsService.save(news);
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            String username = authentication.getName();
+            String role = authentication.getAuthorities().iterator().next().getAuthority();
+
+            News createdNews = newsService.save(news, username, role);
             if (messagingTemplate != null) {
                 messagingTemplate.convertAndSend("/topic/news", "📰 Tin tức mới: " + createdNews.getTitle());
                 messagingTemplate.convertAndSend("/topic/notifications", "📢 Bài viết mới được đăng: " + createdNews.getTitle());
@@ -54,7 +81,8 @@ public class NewsRestController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<?> updateNews(@PathVariable Long id, @RequestBody News newsDetails) {
+    public ResponseEntity<?> updateNews(@PathVariable Long id, @RequestBody News newsDetails, @RequestParam String username,
+                                        @RequestParam String role) {
         try {
             // Kiểm tra dữ liệu bắt buộc: tiêu đề và nội dung không được để trống
             if (newsDetails.getTitle() == null || newsDetails.getTitle().trim().isEmpty()) {
@@ -67,7 +95,7 @@ public class NewsRestController {
             }
 
             // Gọi hàm cập nhật trong service (đã được điều chỉnh để xử lý danh sách ảnh)
-            News updatedNews = newsService.updateNews(id, newsDetails);
+            News updatedNews = newsService.updateNews(id, newsDetails, username, role);
 
             // Gửi thông báo nếu có cấu hình SimpMessagingTemplate
             if (messagingTemplate != null) {
@@ -98,4 +126,35 @@ public class NewsRestController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("❌ Lỗi khi xóa tin tức: " + e.getMessage());
         }
     }
+    @PutMapping("/{id}/approve")
+    public ResponseEntity<?> approveNews(@PathVariable Long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName(); // Lấy username từ token đã xác thực
+        Account account = accountService.findAccountByUsername(username);
+        Optional<News> optionalNews = newsService.findById(id);
+        if (optionalNews.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy bài viết!");
+        }
+        News news = optionalNews.get();
+
+        news.setStatus(NewsStatus.APPROVED);
+        newsService.updateNews(id, news, username, account.getRole().getNameRoles());
+        return ResponseEntity.ok("Bài viết đã được duyệt!");
+    }
+    @PutMapping("/{id}/reject")
+    public ResponseEntity<?> rejectNews(@PathVariable Long id) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName(); // Lấy username từ token đã xác thực
+        Account account = accountService.findAccountByUsername(username);
+        Optional<News> optionalNews = newsService.findById(id);
+        if (optionalNews.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Không tìm thấy bài viết!");
+        }
+        News news = optionalNews.get();
+        news.setStatus(NewsStatus.REJECTED);
+        newsService.updateNews(id, news, username, account.getRole().getNameRoles());
+
+        return ResponseEntity.ok("Bài viết đã bị từ chối!");
+    }
+
 }
