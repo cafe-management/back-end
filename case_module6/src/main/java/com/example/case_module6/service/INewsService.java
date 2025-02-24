@@ -13,4 +13,5 @@ public interface INewsService{
     News updateNews(Long id, News newsDetails,  String username, String role);
     void deleteById(Long id);
     List<News> findByStatus(NewsStatus status);
+    News updateNewsStatus(Long id, NewsStatus newStatus, String username, String role);
 }
