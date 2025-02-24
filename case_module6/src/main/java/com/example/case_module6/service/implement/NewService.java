@@ -20,9 +20,10 @@ public class NewService implements INewsService {
     public List<News> findAll(String username, String role, NewsStatus status) {
         if (role.equals("admin")) {
             return newsRepository.findByStatus(status);
-        } else {
+        } else if(role.equals("employ")) {
             return newsRepository.findByCreatedBy(username);
         }
+        return newsRepository.findByStatus(status);
     }
 
     @Override
