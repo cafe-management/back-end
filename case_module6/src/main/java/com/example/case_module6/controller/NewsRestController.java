@@ -16,6 +16,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -156,5 +157,26 @@ public class NewsRestController {
 
         return ResponseEntity.ok("Bài viết đã bị từ chối!");
     }
+    @PutMapping("/{id}/status")
+    public ResponseEntity<?> updateNewsStatus(
+            @PathVariable Long id,
+            @RequestBody Map<String, String> requestBody) {
 
+        // Lấy thông tin trạng thái mới từ payload
+        String statusValue = requestBody.get("status");
+        NewsStatus newStatus;
+        try {
+            newStatus = NewsStatus.valueOf(statusValue.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Trạng thái không hợp lệ!");
+        }
+
+        // Lấy thông tin người dùng từ Authentication (giả sử đã được cấu hình)
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String username = authentication.getName();
+        String role = authentication.getAuthorities().iterator().next().getAuthority();
+
+        News updatedNews = newsService.updateNewsStatus(id, newStatus, username, role);
+        return ResponseEntity.ok(updatedNews);
+    }
 }
