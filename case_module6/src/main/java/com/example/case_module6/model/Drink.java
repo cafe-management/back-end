@@ -32,6 +32,10 @@
 
         @Column(name = "img_drinks")
         private String imgDrinks;
+
+        @Column(name = "is_new")
+        private boolean isNew = false;
+
         @PrePersist
         protected void onCreate() {
             this.maSoMon = UUID.randomUUID().toString();
