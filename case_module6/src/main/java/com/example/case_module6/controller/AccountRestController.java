@@ -23,8 +23,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@CrossOrigin(value = "*")
 @RequestMapping("api/login")
+@CrossOrigin(value = "*")
 public class AccountRestController {
     @Value("${jwt.secret}")
     private String secretKey;
