@@ -36,6 +36,10 @@
         @Column(name = "is_new")
         private boolean isNew = false;
 
+        @Column(name = "is_deleted", nullable = false)
+        private boolean isDeleted = false;
+
+
         @PrePersist
         protected void onCreate() {
             this.maSoMon = UUID.randomUUID().toString();
