@@ -36,8 +36,14 @@ public class AccountService implements IAccountService {
         Account account = accountRepository.findByUserName(username);
 
         if (account == null || account.isLocked()) {
-            return Map.of("success", false, "message", "Tài khoản không tồn tại");
+            return Map.of("success", false, "message", "Tài khoản không tồn tại hoặc đã bị khóa");
         }
+
+        // Kiểm tra mật khẩu nhập vào có khớp với mật khẩu đã được mã hoá trong database hay không
+        if (!passwordEncoder.matches(password, account.getPassword())) {
+            return Map.of("success", false, "message", "Mật khẩu không đúng");
+        }
+
         return Map.of("success", true, "message", "Đăng nhập thành công");
     }
     @Override
