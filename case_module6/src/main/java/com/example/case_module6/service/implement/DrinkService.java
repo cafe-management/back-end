@@ -1,7 +1,6 @@
 package com.example.case_module6.service.implement;
 
 import com.example.case_module6.model.Drink;
-import com.example.case_module6.model.News;
 import com.example.case_module6.repository.DrinkRepository;
 import com.example.case_module6.service.IDrinkService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,17 +16,18 @@ public class DrinkService implements IDrinkService {
 
     @Override
     public List<Drink> getAll() {
-        return drinkRepository.findAll();
+        // Chỉ lấy các drink chưa bị đánh dấu xóa
+        return drinkRepository.findByIsDeletedFalse();
     }
 
     @Override
     public void save(Drink entity) {
-         drinkRepository.save(entity);
+        drinkRepository.save(entity);
     }
 
     @Override
     public void update(Long id, Drink entity) {
-        Optional<Drink> drink = drinkRepository.findById(id);
+        Optional<Drink> drink = drinkRepository.findByIdAndIsDeletedFalse(id);
         if (drink.isPresent()) {
             entity.setId(id);
             drinkRepository.save(entity);
@@ -36,17 +36,23 @@ public class DrinkService implements IDrinkService {
 
     @Override
     public void delete(Long id) {
-        drinkRepository.deleteById(id);
+        // Thực hiện soft delete: đánh dấu isDeleted = true
+        Optional<Drink> drink = drinkRepository.findByIdAndIsDeletedFalse(id);
+        if (drink.isPresent()) {
+            Drink existingDrink = drink.get();
+            existingDrink.setDeleted(true);
+            drinkRepository.save(existingDrink);
+        }
     }
 
     @Override
     public Drink findById(Long id) {
-        Optional<Drink> drink = drinkRepository.findById(id);
+        Optional<Drink> drink = drinkRepository.findByIdAndIsDeletedFalse(id);
         return drink.orElse(null);
     }
 
     @Override
-    public List<Drink>findDrinkByCategory(Long categoryId) {
-        return drinkRepository.findByCategoryId(categoryId);
+    public List<Drink> findDrinkByCategory(Long categoryId) {
+        return drinkRepository.findByCategoryIdAndIsDeletedFalse(categoryId);
     }
 }
