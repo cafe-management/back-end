@@ -1,6 +1,8 @@
  package com.example.case_module6.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
@@ -33,6 +35,11 @@ public class Feedback {
     @NotBlank(message = "Nội dung phản hồi không được để trống")
     @Column(nullable = false)
     private String content;
+
+    @Min(value = 1, message = "Số sao tối thiểu là 1")
+    @Max(value = 5, message = "Số sao tối đa là 5")
+    @Column(name = "rating")
+    private String rating;
 
     @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "feedback_id")
