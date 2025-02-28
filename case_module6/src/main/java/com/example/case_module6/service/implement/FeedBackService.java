@@ -47,8 +47,12 @@ public class FeedBackService implements IFeedbackService {
         notificationService.save(notification);
         messagingTemplate.convertAndSend("/topic/notifications", notification);
 
-        if (customerEmail != null && !customerEmail.isEmpty()) {
-            emailService.sendThankYouEmail(customerName, customerEmail, savedFeedback.getId());
+        try {
+            if (customerEmail != null && !customerEmail.isEmpty()) {
+                emailService.sendThankYouEmail(customerName, customerEmail, savedFeedback.getId());
+            }
+        } catch (Exception e) {
+            System.out.println(e.getMessage());
         }
 
         return savedFeedback;
