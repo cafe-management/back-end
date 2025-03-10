@@ -16,4 +16,5 @@ public interface DrinkRepository extends JpaRepository<Drink, Long> {
     // Lấy đồ uống theo category mà chưa bị xóa
     List<Drink> findByCategoryIdAndIsDeletedFalse(Long categoryId);
 
+    List<Drink> findByIsNewTrueAndIsDeletedFalse();
 }

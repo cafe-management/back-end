@@ -1,4 +1,4 @@
-package com.example.case_module6.dto;
+package com.example.case_module6.DTO;
 
 import lombok.Getter;
 import lombok.Setter;

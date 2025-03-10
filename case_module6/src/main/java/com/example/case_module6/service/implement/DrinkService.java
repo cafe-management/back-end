@@ -22,6 +22,14 @@ public class DrinkService implements IDrinkService {
 
     @Override
     public void save(Drink entity) {
+        List<Drink> newDrinks = drinkRepository.findByIsNewTrueAndIsDeletedFalse();
+        // Cập nhật lại các món này, đánh dấu new thành false
+        for (Drink d : newDrinks) {
+            d.setNew(false);
+            drinkRepository.save(d);
+        }
+        // Đánh dấu món mới được thêm là new
+        entity.setNew(true);
         drinkRepository.save(entity);
     }
 
