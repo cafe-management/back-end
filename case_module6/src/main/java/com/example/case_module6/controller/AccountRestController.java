@@ -1,8 +1,8 @@
 package com.example.case_module6.controller;
-import com.example.case_module6.dto.ChangePasswordRequest;
-import com.example.case_module6.dto.ForGotPassWordDTO;
-import com.example.case_module6.dto.ResetPasswordDTO;
-import com.example.case_module6.dto.VerifyOtpDTO;
+import com.example.case_module6.DTO.ChangePasswordRequest;
+import com.example.case_module6.DTO.ForGotPassWordDTO;
+import com.example.case_module6.DTO.ResetPasswordDTO;
+import com.example.case_module6.DTO.VerifyOtpDTO;
 import com.example.case_module6.model.Account;
 import com.example.case_module6.service.IAccountService;
 import io.jsonwebtoken.Jwts;
