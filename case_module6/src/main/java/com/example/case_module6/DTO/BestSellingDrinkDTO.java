@@ -1,5 +1,4 @@
 package com.example.case_module6.DTO;
-
 import com.example.case_module6.model.Drink;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

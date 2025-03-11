@@ -33,4 +33,6 @@ public class Cart {
     @ManyToOne
     @JoinColumn(name = "invoice_id")
     private Invoice invoice;
+
+    private String note;
 }

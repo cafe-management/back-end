@@ -2,7 +2,6 @@ package com.example.case_module6.service.implement;
 
 import com.example.case_module6.model.CartItem;
 import com.example.case_module6.model.Drink;
-import com.example.case_module6.model.News;
 import com.example.case_module6.repository.CartItemRepository;
 import com.example.case_module6.service.ICartItemService;
 import org.springframework.beans.factory.annotation.Autowired;
