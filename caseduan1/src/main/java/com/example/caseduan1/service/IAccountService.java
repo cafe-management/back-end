@@ -1,7 +1,6 @@
 package com.example.caseduan1.service;
 
 import com.example.caseduan1.model.Account;
-import jakarta.servlet.http.HttpSession;
 
 import java.util.Map;
 
@@ -11,7 +10,7 @@ public interface IAccountService {
     String getRoleIdByUsername(String username);
     Map<String, Object> forgotPassword(String emailOrUsername);
     Map<String, Object> verifyOtp(String emailOrUsername, String otp);
-    Map<String,Object> newPassword(String emailOrUsername, String password);
-    Map<String, Object> lockAccount(Long accountId);
+    Map<String, Object> newPassword(String emailOrUsername, String password);
+    Map<String, Object> lockAccount(Long userId);
     Account findAccountByUsername(String username);
 }

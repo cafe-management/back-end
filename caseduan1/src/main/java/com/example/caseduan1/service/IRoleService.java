@@ -1,7 +1,6 @@
-package com.example.case_module6.service;
+package com.example.caseduan1.service;
 
-import com.example.
-import com.example.caseduan1.model.Role;.model.Role;
+import com.example.caseduan1.model.Role;
 
 import java.util.List;
 

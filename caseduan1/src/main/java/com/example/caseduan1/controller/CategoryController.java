@@ -3,11 +3,11 @@ package com.example.caseduan1.controller;
 import com.example.caseduan1.model.Category;
 import com.example.caseduan1.service.ICategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/categories")
@@ -19,37 +19,38 @@ public class CategoryController {
 
     @GetMapping
     public ResponseEntity<List<Category>> getCategories() {
-        return ResponseEntity.ok(categoryService.getAllCategories());
+        List<Category> categories = categoryService.getAllCategories();
+        return categories.isEmpty() ? ResponseEntity.noContent().build() : ResponseEntity.ok(categories);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Category> getCategoryById(@PathVariable("id") Long id) {
-        Category category = categoryService.findById(id);
-        return category != null ? ResponseEntity.ok(category) : ResponseEntity.notFound().build();
+    public ResponseEntity<?> getCategoryById(@PathVariable Long id) {
+        Optional<Category> category = categoryService.findById(id);
+        return category.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Category> createCategory(@RequestBody Category category) {
+    public ResponseEntity<String> createCategory(@RequestBody Category category) {
         categoryService.saveCategory(category);
-        return ResponseEntity.status(HttpStatus.CREATED).body(category);
+        return ResponseEntity.ok("Danh mục đã được tạo thành công!");
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Category> updateCategory(@PathVariable("id") Long id, @RequestBody Category category) {
-        Category existingCategory = categoryService.findById(id);
-        if (existingCategory == null) {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<String> updateCategory(@PathVariable Long id, @RequestBody Category category) {
+        Optional<Category> existingCategory = categoryService.findById(id);
+        if (existingCategory.isPresent()) {
+            categoryService.updateCategory(id, category);
+            return ResponseEntity.ok("Danh mục đã được cập nhật!");
         }
-        categoryService.updateCategory(id, category);
-        return ResponseEntity.ok(category);
+        return ResponseEntity.notFound().build();
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteCategory(@PathVariable("id") Long id) {
-        if (categoryService.findById(id) == null) {
-            return ResponseEntity.notFound().build();
+    public ResponseEntity<String> deleteCategory(@PathVariable Long id) {
+        if (categoryService.findById(id).isPresent()) {
+            categoryService.deleteCategory(id);
+            return ResponseEntity.ok("Xóa danh mục thành công!");
         }
-        categoryService.deleteCategory(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.notFound().build();
     }
 }

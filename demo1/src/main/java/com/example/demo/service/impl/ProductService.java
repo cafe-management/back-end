@@ -1,10 +1,10 @@
-package service.impl;
+package com.example.demo.service.impl;
 
-import model.Product;
+import com.example.demo.model.Product;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import repository.ProductRepo;
-import service.IProductSrevice;
+import com.example.demo.repository.ProductRepo;
+import com.example.demo.service.IProductSrevice;
 
 import java.util.List;
 
@@ -20,8 +20,9 @@ public class ProductService implements IProductSrevice {
 
     @Override
     public Product getProductById(Long id) {
-        return productRepository.getReferenceById(id);
+        return productRepository.findById(id).orElse(null);
     }
+
 
     @Override
     public void updateProduct(Product product) {
@@ -36,6 +37,6 @@ public class ProductService implements IProductSrevice {
 
     @Override
     public List<Product> getAllProducts() {
-        return productRepository.getAllProducts();
+        return productRepository.findAll();
     }
 }

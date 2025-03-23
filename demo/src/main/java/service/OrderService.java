@@ -1,68 +1,54 @@
-package service.impl;
+package service;
 
 import model.Order;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import repository.OrderRepository;
 import service.IOrderService;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
+@Service
 public class OrderService implements IOrderService {
-    private List<Order> orders = new ArrayList<>();
 
-    @Override
-    public void addOrder(Order order) {
-        orders.add(order);
-    }
-
-    @Override
-    public void updateOrder(int orderId, Order newOrder) {
-        for (int i = 0; i < orders.size(); i++) {
-            if (orders.get(i).getOrderId() == orderId) {
-                orders.set(i, newOrder);
-                return;
-            }
-        }
-    }
-
-    @Override
-    public void deleteOrder(int orderId) {
-        orders.removeIf(order -> order.getOrderId() == orderId);
-    }
+    @Autowired
+    private OrderRepository orderRepository;
 
     @Override
     public List<Order> getAllOrders() {
-        return orders;
+        return orderRepository.findAll();
     }
 
     @Override
-    public Order getOrderById(int orderId) {
-        return orders.stream()
-                .filter(order -> order.getOrderId() == orderId)
-                .findFirst()
-                .orElse(null);
+    public Optional<Order> getOrderById(String orderId) {
+        return orderRepository.findById(orderId);
     }
 
     @Override
-    public List<Order> getOrdersWithHighShippingCost(double minCost) {
-        List<Order> result = new ArrayList<>();
-        for (Order order : orders) {
-            if (order.getShippingCost() >= minCost) {
-                result.add(order);
-            }
-        }
-        return result;
+    public Order createOrder(Order order) {
+        return orderRepository.save(order);
     }
 
     @Override
-    public double getAverageTotalAmountForInternationalOrders() {
-        double sum = 0;
-        int count = 0;
-        for (Order order : orders) {
-            if (order instanceof model.InternationalOrder) {
-                sum += order.getTotalAmount();
-                count++;
-            }
-        }
-        return count == 0 ? 0 : sum / count;
+    public Order updateOrder(String orderId, Order orderDetails) {
+        return orderRepository.findById(orderId).map(order -> {
+            order.setTotalAmount(orderDetails.getTotalAmount());
+            order.setShippingCost(orderDetails.getShippingCost());
+            order.setOrderType(orderDetails.getOrderType());
+            order.setRushFee(orderDetails.getRushFee());
+            order.setCustomsFee(orderDetails.getCustomsFee());
+            return orderRepository.save(order);
+        }).orElseThrow(() -> new RuntimeException("Order not found"));
+    }
+
+    @Override
+    public void deleteOrder(String orderId) {
+        orderRepository.deleteById(orderId);
+    }
+
+    @Override
+    public List<Order> getOrdersWithHighShippingCost(double minShippingCost) {
+        return orderRepository.findByShippingCostGreaterThanEqual(minShippingCost);
     }
 }

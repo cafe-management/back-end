@@ -1,6 +1,5 @@
-package com.example.case_module6.service;
+package com.example.caseduan1.service;
 
-import com.example.case_module6.model.News;
 
 import java.util.List;
 

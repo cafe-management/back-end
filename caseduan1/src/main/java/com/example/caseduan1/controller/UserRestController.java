@@ -53,10 +53,8 @@ public class UserRestController {
         return ResponseEntity.ok(response);
     }
 
-    // Thêm người dùng mới
     @PostMapping("/admin")
     public ResponseEntity<User> addUser(@RequestBody User user) {
-        // Nếu không có Account, tạo mới để đảm bảo tránh null pointer
         if (user.getAccount() == null) {
             user.setAccount(new Account());
         }
@@ -64,7 +62,6 @@ public class UserRestController {
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 
-    // Lấy thông tin người dùng theo username
     @GetMapping("/information")
     public ResponseEntity<User> getUserInformation(@RequestParam("username") String username) {
         User user = userService.getUserByUsername(username);

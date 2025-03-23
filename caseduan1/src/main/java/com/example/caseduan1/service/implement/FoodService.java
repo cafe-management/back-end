@@ -1,6 +1,5 @@
 package com.example.caseduan1.service.implement;
 
-import com.example.caseduan1.dto.FoodDTO;
 import com.example.caseduan1.model.Food;
 import com.example.caseduan1.repository.FoodRepository;
 import com.example.caseduan1.service.IFoodService;
@@ -9,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class FoodService implements IFoodService {
@@ -17,8 +15,8 @@ public class FoodService implements IFoodService {
     private FoodRepository foodRepository;
 
     @Override
-    public List<FoodDTO> getAllFoods() {
-        return foodRepository.findAll().stream().map(FoodDTO::new).collect(Collectors.toList());
+    public List<Food> getAllFoods() {
+        return foodRepository.findAll();
     }
 
     @Override
@@ -41,6 +39,7 @@ public class FoodService implements IFoodService {
             food.setQuantity(updatedFood.getQuantity());
             food.setRating(updatedFood.getRating());
             food.setStatus(updatedFood.getStatus());
+            food.setImageUrl(updatedFood.getImageUrl()); // Đảm bảo cập nhật ảnh món ăn
             return foodRepository.save(food);
         }).orElse(null);
     }
@@ -51,7 +50,7 @@ public class FoodService implements IFoodService {
     }
 
     @Override
-    public List<FoodDTO> searchFoodByName(String name) {
-        return foodRepository.findByNameContainingIgnoreCase(name).stream().map(FoodDTO::new).collect(Collectors.toList());
+    public List<Food> searchFoodByName(String name) {
+        return foodRepository.findByNameContainingIgnoreCase(name);
     }
 }

@@ -1,4 +1,4 @@
-package service.impl;
+package service;
 
 import model.OrderType;
 import org.springframework.beans.factory.annotation.Autowired;

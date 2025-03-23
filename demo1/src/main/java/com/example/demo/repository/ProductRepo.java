@@ -1,10 +1,13 @@
-package repository;
+package com.example.demo.repository;
 
-import model.Product;
+import com.example.demo.model.Product;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
-public interface ProductRepo extends JpaRepository<Product,Long> {
-    List<Product> getAllProducts();
+@Repository
+public interface ProductRepo extends JpaRepository<Product, Long> {
+
+    List<Product> findAll();
 }
